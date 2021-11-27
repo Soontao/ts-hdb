@@ -1,6 +1,7 @@
 {
-  "name": "template",
-  "version": "0.0.1",
+  "name": "ts-hdb",
+  "version": "0.1.0",
+  "description": "hdb driver with typescript",
   "main": "lib/index.js",
   "scripts": {
     "test": "jest --passWithNoTests",
@@ -49,5 +50,6 @@
     "SAP",
     "HANA",
     "Database"
-  ]
+  ],
+  "license": "Apache-2.0"
 }
