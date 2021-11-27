@@ -10,6 +10,10 @@ describe("Basic Test Suite", () => {
     expect(rows).toHaveLength(1);
     expect(rows[0]).toHaveProperty("LABEL_ONE");
     expect(rows[0].LABEL_ONE).toBe(1);
+
+    expect(client.readyState).toBe("connected");
+    expect(typeof client.clientId).toBe("string");
+    await client.disconnect();    
     client.close();
   });
  

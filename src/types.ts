@@ -63,4 +63,4 @@ export interface HDBClientOption extends ConnectionOptions {
   useCesu8?: boolean;
 }
 
-export type ReadyState = "new" | "open" | "closed" | "disconnected"
+export type ReadyState = "new" | "open" | "connected" | "closed" | "disconnected"

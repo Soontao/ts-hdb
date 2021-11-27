@@ -52,6 +52,10 @@ export class HDBClient {
     return this?._client?.readyState;
   }
 
+  public get clientId(): string {
+    return this?._client?.clientId;
+  }
+
   /**
    * Direct statement execution is the simplest way to execute SQL statements.
    * 
@@ -183,8 +187,25 @@ export class HDBClient {
     });
   }
 
+  public async disconnect() {
+    if (this._client) {
+      return new Promise((resolve, reject) => {
+        this._client.disconnect((err: Error) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(undefined);
+          }
+        });
+      });
+    }
+  }
+
   public close() {
-    this._client.close();
+    if (this._client) {
+      this._client.close();
+      delete this._client;
+    }
   }
 
 }
