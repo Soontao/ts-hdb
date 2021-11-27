@@ -15,3 +15,5 @@ export const get_db_options = () => {
 export const random_str = () => {
   return uuid.v4().split("-")[0];
 };
+
+export const random_table_name = () => `test_table_${random_str()}z`.toLowerCase();
