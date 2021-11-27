@@ -8,6 +8,9 @@ import { HDBClientOption, ReadyState } from "./types";
 
 const logger = debug("hdb-client");
 
+/**
+ * HDB Client
+ */
 export class HDBClient {
 
   private _options: HDBClientOption;
@@ -48,10 +51,16 @@ export class HDBClient {
     }
   }
 
+  /**
+   * read state of connection
+   */
   public get readyState(): ReadyState {
     return this?._client?.readyState;
   }
 
+  /**
+   * client of connection
+   */
   public get clientId(): string {
     return this?._client?.clientId;
   }

@@ -18,11 +18,20 @@ export class Statement {
   }
 
   /**
+   * direct execute write
    * 
-   * @param params affectedRows array
-   * @returns 
+   * @param params each param item will contain an array, each item could be inserted to table
+   * @returns affectedRows array
+   * 
+   * 
+   * @example
+   * ```ts
+   * const affectedRows = await stat.write([1, "Theo"], [2, "Neo"], [3, "Nano"]);
+   * expect(affectedRows).toStrictEqual([1, 1, 1]);
+   * ```
+   * 
    */
-  public async write(...params: Array<any>): Promise<Array<Array<number>>> {
+  public async write(...params: Array<any>): Promise<Array<number>> {
     return new Promise((resolve, reject) => {
       this._statement.exec(params, (err: Error, results: Array<any>) => {
         if (err) {
@@ -35,6 +44,7 @@ export class Statement {
   }
 
   /**
+   * direct execute query
    * 
    * @param params 
    * @returns query result
@@ -52,7 +62,7 @@ export class Statement {
   }
 
   /**
-   * call proc
+   * direct call proc
    * 
    * ref the [document](https://github.com/SAP/node-hdb#calling-stored-procedures)
    * 
@@ -89,10 +99,10 @@ export class Statement {
   }
 
   /**
-   * execute with param
+   * execute with param, in stream mode
    * 
    * @param params 
-   * @returns result 
+   * @returns result set
    */
   public async execute(...params: Array<any>): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
