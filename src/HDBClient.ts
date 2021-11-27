@@ -75,7 +75,7 @@ export class HDBClient {
    * await client.exec('select A, B from TEST.NUMBERS order by A') // => [{A:1,B:2},{A:3,B:4}]
    * ```
    */
-  public async exec(sql: string): Promise<number | any[]> {
+  public async exec(sql: string): Promise<any> {
     await this._connect();
     return new Promise((resolve, reject) => {
       this._client.exec(sql, (err: Error, result: any) => {
@@ -94,7 +94,12 @@ export class HDBClient {
    * @param sql query sQL
    * @returns array of query result
    */
-  public async execQuery<T = any>(sql: string): Promise<Array<T>> {
+  public async query<T = any>(sql: string): Promise<Array<T>> {
+    // @ts-ignore
+    return this.exec(sql);
+  }
+
+  public async write(sql: string): Promise<number> {
     // @ts-ignore
     return this.exec(sql);
   }
@@ -109,6 +114,7 @@ export class HDBClient {
    * 
    * ```ts
    * await client.prepare('select * from DUMMY where DUMMY = ?')
+   * await client.prepare('INSERT INTO PERSON VALUES (?,?)')
    * ```
    */
   public async prepare(sql: string): Promise<Statement> {
@@ -148,6 +154,11 @@ export class HDBClient {
     });
   }
 
+  /**
+   * set auto commit 
+   * 
+   * @param autoCommit 
+   */
   public async setAutoCommit(autoCommit: boolean) {
     await this._connect();
     this._client.setAutoCommit(autoCommit);
@@ -187,6 +198,11 @@ export class HDBClient {
     });
   }
 
+  /**
+   * disconnect form HANA server
+   * 
+   * @returns 
+   */
   public async disconnect() {
     if (this._client) {
       return new Promise((resolve, reject) => {
@@ -201,6 +217,9 @@ export class HDBClient {
     }
   }
 
+  /**
+   * close tcp connection
+   */
   public close() {
     if (this._client) {
       this._client.close();

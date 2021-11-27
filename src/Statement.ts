@@ -17,27 +17,54 @@ export class Statement {
   }
 
   /**
-   * The execution of a prepared statement is similar to the direct statement execution on the client.
    * 
-   * The difference is that the first parameter of the exec function is an array with positional parameters. 
-   * 
-   * In case of named parameters it can also be an parameters object
-   * 
-   * @param params 
-   * 
+   * @param params affectedRows array
    * @returns 
    */
-  public async exec(...params: Array<any>): Promise<Array<any>> {
+  public async write(...params: Array<any>): Promise<Array<Array<number>>> {
     return new Promise((resolve, reject) => {
-      this._statement.exec(params, (err: Error, ...results: Array<any>) => {
+      this._statement.exec(params, (err: Error, results: Array<any>) => {
         if (err) {
           reject(err);
         } else {
-          if (results.length === 1) {
-            resolve(results[0]);
-          } else {
-            resolve(results);
-          }
+          resolve(results);
+        }
+      });
+    });
+  }
+
+  /**
+   * 
+   * @param params 
+   * @returns query result
+   */
+  public async query<T = any>(...params: Array<any>): Promise<Array<T>> {
+    return new Promise((resolve, reject) => {
+      this._statement.exec(params, (err: Error, results: Array<any>) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  }
+
+  /**
+   * call proc
+   * 
+   * ref the [document](https://github.com/SAP/node-hdb#calling-stored-procedures)
+   * 
+   * @param param param map
+   * @returns out parameters array
+   */
+  public async call(param: any): Promise<Array<any>> {
+    return new Promise((resolve, reject) => {
+      this._statement.exec(param, (err: Error, ...results: Array<any>) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
         }
       });
     });

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-
+import * as uuid from "uuid";
 dotenv.config();
 
 export const get_db_options = () => {
@@ -10,4 +10,8 @@ export const get_db_options = () => {
     password: process.env.TEST_HC_PASSWORD,
     useTLS: true,
   };
+};
+
+export const random_str = () => {
+  return uuid.v4().split("-")[0];
 };
