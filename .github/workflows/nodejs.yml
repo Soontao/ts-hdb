@@ -41,6 +41,10 @@ jobs:
           npm run coverage
         env:
           CI: true
+          TEST_HC_HOST: ${{ secrets.TEST_HC_HOST }}
+          TEST_HC_PORT: ${{ secrets.TEST_HC_PORT }}
+          TEST_HC_USER: ${{ secrets.TEST_HC_USER }}
+          TEST_HC_PASSWORD: ${{ secrets.TEST_HC_PASSWORD }}
 
       - name: upload coverage
         uses: codecov/codecov-action@v1

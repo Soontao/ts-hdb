@@ -1,3 +1,5 @@
-export const a = 1;
+import { HDBClient } from "./HDBClient";
 
-export const b = "1";
+export { HDBClient };
+
+export default HDBClient;

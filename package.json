@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "lib/index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --passWithNoTests",
+    "test": "jest --passWithNoTests",
     "prettier": "prettier --check --write src",
     "prebuild": "rimraf lib",
     "build": "tsc",
@@ -14,11 +14,13 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^14.1.0",
+    "@types/debug": "^4.1.7",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.10",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "commitlint": "^14.1.0",
+    "dotenv": "^10.0.0",
     "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -35,5 +37,15 @@
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
-  }
+  },
+  "dependencies": {
+    "@newdash/newdash": "^5.20.0",
+    "debug": "^4.3.2",
+    "hdb": "^0.19.0"
+  },
+  "keywords": [
+    "SAP",
+    "HANA",
+    "Database"
+  ]
 }
