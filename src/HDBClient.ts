@@ -89,7 +89,7 @@ export class HDBClient {
   }
 
   /**
-   * exec with query
+   * Direct statement execution with query
    * 
    * @param sql query sQL
    * @returns array of query result
@@ -99,6 +99,12 @@ export class HDBClient {
     return this.exec(sql);
   }
 
+  /**
+   * Direct statement execution with insert/update/delete
+   * 
+   * @param sql 
+   * @returns 
+   */
   public async write(sql: string): Promise<number> {
     // @ts-ignore
     return this.exec(sql);
@@ -169,7 +175,7 @@ export class HDBClient {
    * 
    * @returns 
    */
-  public async commit() {
+  public async commit(): Promise<void> {
     return new Promise((resolve, reject) => {
       this._client.commit((err: Error) => {
         if (err) {
@@ -186,7 +192,7 @@ export class HDBClient {
    * 
    * @returns 
    */
-  public async rollback() {
+  public async rollback(): Promise<void> {
     return new Promise((resolve, reject) => {
       this._client.rollback((err: Error) => {
         if (err) {

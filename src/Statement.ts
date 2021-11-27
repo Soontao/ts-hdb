@@ -1,3 +1,4 @@
+import { ResultSet } from "./ResultSet";
 
 export class Statement {
   
@@ -82,6 +83,24 @@ export class Statement {
           reject(err);
         } else {
           resolve(undefined);
+        }
+      });
+    });
+  }
+
+  /**
+   * execute with param
+   * 
+   * @param params 
+   * @returns result 
+   */
+  public async execute(...params: Array<any>): Promise<ResultSet> {
+    return new Promise((resolve, reject) => {
+      this._statement.execute(params, (err: Error, rs: ResultSet) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rs);
         }
       });
     });

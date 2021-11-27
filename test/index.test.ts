@@ -4,6 +4,7 @@ import { get_db_options, random_table_name } from "./utils";
 describe("Basic Test Suite", () => {
 
   it("should support connect to database and query dummy", async () => {
+    
     expect(get_db_options().host).not.toBeUndefined();
     const client = new HDBClient(get_db_options());
     try {
@@ -23,12 +24,13 @@ describe("Basic Test Suite", () => {
 
   it("should support create statement and query with parameter", async () => {
     const client = new HDBClient(get_db_options());
+    const table_name = random_table_name();
+    const response =  await client.exec(`CREATE COLUMN TABLE ${table_name} (
+      ID bigint NOT NULL, 
+      NAME nvarchar(255)
+    )`);
+    
     try {
-      const table_name = random_table_name();
-      const response =  await client.exec(`CREATE COLUMN TABLE ${table_name} (
-        ID bigint NOT NULL, 
-        NAME nvarchar(255)
-      )`);
       expect(response).toBeUndefined();
       const stat = await client.prepare(`INSERT INTO ${table_name} VALUES (?,?)`);
       expect(stat).not.toBeUndefined();
@@ -47,9 +49,17 @@ describe("Basic Test Suite", () => {
       expect(result_set).toHaveLength(1);
       expect(result_set[0].NAME).toBe("Theo");
 
+      const query_rs =  await  query_stat.execute(2);
+      expect(query_rs).not.toBeUndefined();
+      for await (const row of query_rs.createObjectStream()) {
+        expect(row.ID).not.toBeUndefined();
+        expect(row.NAME).not.toBeUndefined();
+      }
+      query_rs.close();
+
       await query_stat.drop();
-      await client.exec(`DROP TABLE ${table_name}`);
     } finally {
+      await client.exec(`DROP TABLE ${table_name}`);
       await client.disconnect();    
       client.close();
     }
@@ -57,13 +67,16 @@ describe("Basic Test Suite", () => {
   });
 
   it("should support read as stream", async () => {
+    
     const client = new HDBClient(get_db_options());
+    const table_name = random_table_name();
+    const response =  await client.exec(`CREATE COLUMN TABLE ${table_name} (
+      ID bigint NOT NULL, 
+      NAME nvarchar(255)
+    )`);
+    
     try {
-      const table_name = random_table_name();
-      const response =  await client.exec(`CREATE COLUMN TABLE ${table_name} (
-        ID bigint NOT NULL, 
-        NAME nvarchar(255)
-      )`);
+
       expect(response).toBeUndefined();
       const stat = await client.prepare(`INSERT INTO ${table_name} VALUES (?,?)`);
       expect(stat).not.toBeUndefined();
@@ -87,6 +100,7 @@ describe("Basic Test Suite", () => {
       rs.close();
 
     } finally {
+      await client.exec(`DROP TABLE ${table_name}`);
       await client.disconnect();    
       client.close();
     }
