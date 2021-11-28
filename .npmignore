@@ -8,3 +8,7 @@ commitlint.config.js
 jest.config.js
 .env
 *.tgz
+.editorconfig
+.prettierignore
+.prettierrc.json
+src
