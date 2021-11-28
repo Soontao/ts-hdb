@@ -10,7 +10,10 @@
     "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
   },
   "cSpell.words": [
+    "ABAP",
     "Cesu",
-    "paren"
+    "paren",
+    "SAVEPOINT",
+    "sqlscript"
   ]
 }

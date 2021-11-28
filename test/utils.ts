@@ -22,6 +22,8 @@ export const random_str = () => {
 
 export const random_table_name = () => `test_table_${random_str()}z`.toLowerCase();
 
+export const random_proc_name = () => `test_proc_${random_str()}z`.toLowerCase();
+
 export const random_blob_readable_stream = () => {
   const content = uuid.v4();
   const buffer = Buffer.from(content, "utf-8");

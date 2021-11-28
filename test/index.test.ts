@@ -40,7 +40,7 @@ describe("Basic Test Suite", () => {
 
       await stat.drop();
 
-      const [{TOTAL}] = await client.exec(`SELECT COUNT(1) AS TOTAL FROM ${table_name}`);
+      const [{ TOTAL }] = await client.exec(`SELECT COUNT(1) AS TOTAL FROM ${table_name}`);
       expect(TOTAL).toBe(2);
 
       const query_stat = await client.prepare(`SELECT ID, NAME FROM ${table_name} WHERE ID = ?`);

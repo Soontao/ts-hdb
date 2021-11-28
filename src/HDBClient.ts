@@ -122,13 +122,15 @@ export class HDBClient {
   /**
    * The client returns a statement object which can be executed multiple times
    * 
+   * prepare SELECT, INSERT or PROCEDURE 
+   * 
    * @param sql 
    * @returns 
    * 
    * @example
    * 
    * ```ts
-   * await client.prepare('select * from DUMMY where DUMMY = ?')
+   * await client.prepare('SELECT * FROM DUMMY WHERE DUMMY = ?')
    * await client.prepare('INSERT INTO PERSON VALUES (?,?)')
    * ```
    */

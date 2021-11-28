@@ -1,4 +1,6 @@
+import { NotSupportedOperationError } from "./errors";
 import { ResultSet } from "./ResultSet";
+import { FunctionCode } from "./types";
 
 export class Statement {
   
@@ -14,9 +16,13 @@ export class Statement {
   }
 
   public get id() {
-    return this?._statement?.id;
+    return this?._statement?.id?.toString("hex");
   }
 
+  public get functionCode(): FunctionCode {
+    return this?._statement.functionCode;
+  }
+  
   /**
    * direct execute write
    * 
@@ -86,7 +92,7 @@ export class Statement {
    * 
    * @returns 
    */
-  public async drop() {
+  public async drop(): Promise<void> {
     return new Promise((resolve, reject) => {
       this._statement.drop((err: Error) => {
         if (err) {
@@ -103,8 +109,12 @@ export class Statement {
    * 
    * @param params 
    * @returns result set
+   * @throws {NotSupportedOperationError}
    */
   public async execute(...params: Array<any>): Promise<ResultSet> {
+    if (this.functionCode === FunctionCode.DB_PROCEDURE_CALL) {
+      throw new NotSupportedOperationError(`not support to use 'execute' method to call procedure`);
+    }
     return new Promise((resolve, reject) => {
       this._statement.execute(params, (err: Error, rs: ResultSet) => {
         if (err) {

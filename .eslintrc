@@ -47,6 +47,11 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
     "space-before-blocks": "error",
+    "key-spacing": "error",
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
     "space-infix-ops": "off",
     "@typescript-eslint/space-infix-ops": "error",
     "comma-spacing": "error",
