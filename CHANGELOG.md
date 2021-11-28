@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/Soontao/ts-hdb/compare/v0.1.1...v0.1.2) (2021-11-28)
+
+
+### Bug Fixes
+
+* ci ([d0d04aa](https://github.com/Soontao/ts-hdb/commit/d0d04aa5fb73e11f0b1065ae370d33fce5063f27))
+
 ### 0.1.1 (2021-11-28)
 
 
