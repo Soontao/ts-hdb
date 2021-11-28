@@ -32,5 +32,5 @@ async function run() {
 run()
 ```
 
-
+## [CHANGELOG](./CHANGELOG.md)
 ## [LICENSE](./LICENSE)
