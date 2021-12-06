@@ -130,3 +130,24 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
   }
 
 }
+
+type CommonMethod = "id" | "drop" | "functionCode"
+
+export type CallProcedureSql = `${"call" | "CALL"}${any}`
+export type WriteSql = `${"insert" | "update" | "delete" | "INSERT" | "UPDATE" | "DELETE"}${any}`
+export type QuerySql = `${"select" | "SELECT"}${any}`
+export type DDL = `${"create" | "drop" | "CREATE" | "DROP"}${any}`
+
+/**
+ * execute procedure
+ */
+export type CallProcedureStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "call">
+/**
+ * perform INSERT/UPDATE/DELETE
+ */
+export type WriteStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "write">
+/**
+ * perform SELECT query
+ */
+export type QueryStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "execute" | "query">
+

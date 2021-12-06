@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ConnectionOptions } from "tls";
 
 
@@ -115,3 +116,4 @@ export enum FunctionCode {
   XA_START = 22,
   XA_JOIN = 23, 
 }
+
