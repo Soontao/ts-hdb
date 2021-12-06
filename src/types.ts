@@ -65,6 +65,27 @@ export interface HDBClientOption extends ConnectionOptions {
 
 export type ReadyState = "new" | "open" | "connected" | "closed" | "disconnected"
 
+// >> ref https://stackoverflow.com/a/68695508/4380476
+type UnionToIntersection<U> =
+(U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
+type LastOf<T> =
+UnionToIntersection<T extends any ? () => T : never> extends () => (infer R) ? R : never
+
+// TS4.0+
+type Push<T extends any[], V> = [...T, V];
+
+// TS4.1+
+type TupleUnion<T, L = LastOf<T>, N = [T] extends [never] ? true : false> =
+true extends N ? [] : Push<TupleUnion<Exclude<T, L>>, L>
+
+export type ObjValueTuple<T, KS extends any[] = 
+TupleUnion<keyof T>, R extends any[] = []> =
+KS extends [infer K, ...infer KT]
+  ? ObjValueTuple<T, KT, [...R, T[K & keyof T]]>
+  : R;
+
+// <<
+
 /**
  * Function Code
  */

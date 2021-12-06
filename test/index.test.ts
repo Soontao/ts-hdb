@@ -29,10 +29,16 @@ describe("Basic Test Suite", () => {
       ID bigint NOT NULL, 
       NAME nvarchar(255)
     )`);
-    
+
+  
+
     try {
+      interface T {
+        ID: number,
+        NAME: string,
+      }
       expect(response).toBeUndefined();
-      const stat = await client.prepare(`INSERT INTO ${table_name} VALUES (?,?)`);
+      const stat = await client.prepare<T>(`INSERT INTO ${table_name} VALUES (?,?)`);
       expect(stat).not.toBeUndefined();
       expect(stat.id).not.toBeUndefined();
       const affectedRows = await stat.write([1, "Theo"], [2, "Neo"]);
@@ -43,7 +49,7 @@ describe("Basic Test Suite", () => {
       const [{ TOTAL }] = await client.exec(`SELECT COUNT(1) AS TOTAL FROM ${table_name}`);
       expect(TOTAL).toBe(2);
 
-      const query_stat = await client.prepare(`SELECT ID, NAME FROM ${table_name} WHERE ID = ?`);
+      const query_stat = await client.prepare<T, [number]>(`SELECT ID, NAME FROM ${table_name} WHERE ID = ?`);
       expect(query_stat).not.toBeUndefined();
       const result_set = await query_stat.query(1);
       expect(result_set).toHaveLength(1);
@@ -84,7 +90,7 @@ describe("Basic Test Suite", () => {
       const affectedRows = await stat.write([1, "Theo"], [2, "Neo"], [3, "Nano"], [4, "Jobs"]);
       expect(affectedRows).toStrictEqual([1, 1, 1, 1]);
 
-      const rs = await client.execute(`SELECT ID, NAME FROM ${table_name}`);
+      const rs = await client.execute<{ID: string, NAME: string}>(`SELECT ID, NAME FROM ${table_name}`);
       rs.setFetchSize(1);
       expect(rs).not.toBeUndefined();
       

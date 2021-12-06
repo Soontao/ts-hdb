@@ -125,6 +125,8 @@ export class HDBClient {
    * prepare SELECT, INSERT or PROCEDURE 
    * 
    * @param sql 
+   * @template ST statement entity type
+   * @template P query parameters type
    * @returns 
    * 
    * @example
@@ -134,7 +136,7 @@ export class HDBClient {
    * await client.prepare('INSERT INTO PERSON VALUES (?,?)')
    * ```
    */
-  public async prepare(sql: string): Promise<Statement> {
+  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: string): Promise<Statement<ST, P>> {
     await this._connect();
     return new Promise((resolve, reject) => {
       this._client.prepare(sql, (err: Error, stat: any) => {
@@ -158,7 +160,7 @@ export class HDBClient {
    * @param query 
    * @returns 
    */
-  public async execute(query: string): Promise<ResultSet> {
+  public async execute<V = any>(query: string): Promise<ResultSet<V>> {
     await this._connect();
     return new Promise((resolve, reject) => {
       this._client.execute(query, (err: Error, rs: any) => {
@@ -187,6 +189,7 @@ export class HDBClient {
    * @returns 
    */
   public async commit(): Promise<void> {
+    await this._connect();
     return new Promise((resolve, reject) => {
       this._client.commit((err: Error) => {
         if (err) {
@@ -204,6 +207,7 @@ export class HDBClient {
    * @returns 
    */
   public async rollback(): Promise<void> {
+    await this._connect();
     return new Promise((resolve, reject) => {
       this._client.rollback((err: Error) => {
         if (err) {

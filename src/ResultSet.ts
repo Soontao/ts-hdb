@@ -1,24 +1,29 @@
 import { Readable } from "stream";
 
 
-export interface ResultSet {
+interface HDBReadableStream<T = any> extends Readable {
+  [Symbol.asyncIterator](): AsyncIterableIterator<T>;
+}
+
+
+export interface ResultSet<T = any> {
   setFetchSize(size: number): void;
   /**
    * return a readable stream, each chunk will be an object
    * 
    * @param options 
    */
-  createObjectStream(options?: StreamOptions): Readable;
+  createObjectStream(options?: StreamOptions): HDBReadableStream<T>;
   /**
    * return a readable stream, each chunk will be an array of objects
    * 
    * @param options 
    */
-  createArrayStream(options?: StreamOptions): Readable;
+  createArrayStream(options?: StreamOptions): HDBReadableStream<T>;
   /**
    * @param options 
    */
-  createReadStream(options?: StreamOptions): Readable;
+  createReadStream(options?: StreamOptions): HDBReadableStream;
   /**
    * close result set
    */

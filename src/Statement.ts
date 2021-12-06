@@ -1,8 +1,11 @@
 import { NotSupportedOperationError } from "./errors";
 import { ResultSet } from "./ResultSet";
-import { FunctionCode } from "./types";
+import { FunctionCode, ObjValueTuple } from "./types";
 
-export class Statement {
+/**
+ * @param T item type, for query only
+ */
+export class Statement<T = any, P extends Array<any> = Array<any>> {
   
   private _statement: any;
 
@@ -37,7 +40,7 @@ export class Statement {
    * ```
    * 
    */
-  public async write(...params: Array<any>): Promise<Array<number>> {
+  public async write(...params: Array<T extends any ? any : ObjValueTuple<T>>): Promise<Array<number>> {
     return new Promise((resolve, reject) => {
       this._statement.exec(params, (err: Error, results: Array<any>) => {
         if (err) {
@@ -55,7 +58,7 @@ export class Statement {
    * @param params 
    * @returns query result
    */
-  public async query<T = any>(...params: Array<any>): Promise<Array<T>> {
+  public async query(...params: P): Promise<Array<T>> {
     return new Promise((resolve, reject) => {
       this._statement.exec(params, (err: Error, results: Array<any>) => {
         if (err) {
@@ -111,7 +114,7 @@ export class Statement {
    * @returns result set
    * @throws {NotSupportedOperationError}
    */
-  public async execute(...params: Array<any>): Promise<ResultSet> {
+  public async execute(...params: P): Promise<ResultSet<T>> {
     if (this.functionCode === FunctionCode.DB_PROCEDURE_CALL) {
       throw new NotSupportedOperationError(`not support to use 'execute' method to call procedure`);
     }
