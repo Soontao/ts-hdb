@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/Soontao/ts-hdb/compare/v0.1.2...v0.1.3) (2021-12-06)
+
+
+### Features
+
+* [#1](https://github.com/Soontao/ts-hdb/issues/1), [#2](https://github.com/Soontao/ts-hdb/issues/2) ([6e62fd7](https://github.com/Soontao/ts-hdb/commit/6e62fd763165d46268d1ee4756610f38491dc9e3))
+* type enhance ([69d35fd](https://github.com/Soontao/ts-hdb/commit/69d35fda45a02a4b0b5222144825550081e8c6d4))
+
 ### [0.1.2](https://github.com/Soontao/ts-hdb/compare/v0.1.1...v0.1.2) (2021-11-28)
 
 
