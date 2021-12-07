@@ -1,6 +1,6 @@
 import { HDBClient } from "../src";
 import { DataType } from "../src/types";
-import { get_db_options, random_table_name } from "./utils";
+import { get_db_options, random_table_name, run_with_table } from "./utils";
 
 describe("Basic Test Suite", () => {
 
@@ -79,44 +79,26 @@ describe("Basic Test Suite", () => {
 
   });
 
-  it("should support read as stream", async () => {
-    
-    const client = new HDBClient(get_db_options());
-    const table_name = random_table_name();
-    const response =  await client.exec(`CREATE COLUMN TABLE ${table_name} (
-      ID bigint NOT NULL, 
-      NAME nvarchar(255)
-    )`);
-    
-    try {
+  it("should support update/delete statements",  () => run_with_table(
+    { ID: "bigint NOT NULL", NAME: "nvarchar(255)" }, 
+    async(client, table_name) => {
+      const inserted = await client.exec(`INSERT INTO ${table_name} VALUES (1, 'Theo')`);
+      expect(inserted).toStrictEqual(1);
 
-      expect(response).toBeUndefined();
-      const stat = await client.prepare(`INSERT INTO ${table_name} VALUES (?,?)`);
-      expect(stat).not.toBeUndefined();
-      expect(stat.id).not.toBeUndefined();
-      const affectedRows = await stat.write([1, "Theo"], [2, "Neo"], [3, "Nano"], [4, "Jobs"]);
-      expect(affectedRows).toStrictEqual([1, 1, 1, 1]);
+      const updated = await client.exec(`UPDATE ${table_name} SET NAME = 'Theo Updated' WHERE ID = 1`);
+      expect(updated).toBe(1);
 
-      const rs = await client.execute<{ID: string, NAME: string}>(`SELECT ID, NAME FROM ${table_name}`);
-      rs.setFetchSize(1);
-      expect(rs).not.toBeUndefined();
-      
-      let total = 0;
-      for await (const chunk of rs.createObjectStream()) {
-        total++;
-        expect(chunk.ID).not.toBeUndefined(); 
-        expect(chunk.NAME).not.toBeUndefined(); 
-      }
+      const updated_2 = await client.exec(`UPDATE ${table_name} SET NAME = 'Theo Updated' WHERE NAME = 'Theo'`);
+      expect(updated_2).toBe(0);
 
-      expect(total).toBe(4);
+      const deleted_1 = await client.exec(`delete from ${table_name} WHERE NAME = 'Theo Updated'`);
+      expect(deleted_1).toBe(1);
 
-      rs.close();
-
-    } finally {
-      await client.exec(`DROP TABLE ${table_name}`);
-      await client.disconnect();    
-      client.close();
+      const deleted_2 = await client.exec(`delete from ${table_name} WHERE NAME = 'Theo Updated'`);
+      expect(deleted_2).toBe(0);
     }
-  });
+  ));
+
+  
  
 });

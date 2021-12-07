@@ -5,7 +5,7 @@ import { Mutex } from "@newdash/newdash";
 import { debug } from "debug";
 import * as hdb from "hdb";
 import { ResultSet } from "./ResultSet";
-import { CUDStatement, DCL, DDL, DML, DMLStatement, DQL, DQLStatement, ProceduralStatement, ProcedureStatement, Statement, TransactionStatement } from "./Statement";
+import { CUDStatement, DCL, DDL, DMLStatement, DQL, DQLStatement, NoParamMatcher, NoParamStatement, ProceduralStatement, ProcedureStatement, Statement, TransactionStatement } from "./Statement";
 import { HDBClientOption, ReadyState } from "./types";
 
 const logger = debug("hdb-client");
@@ -82,7 +82,7 @@ export class HDBClient {
    * 
    * ```ts
    * await client.exec('create table TEST.NUMBERS (a int, b varchar(16))') // => undefined
-   * await client.exec('insert into TEST.NUMBERS values (1, \'one\')') // => 1
+   * await client.exec("insert into TEST.NUMBERS values (1, 'one')") // => 1
    * await client.exec('select A, B from TEST.NUMBERS order by A') // => [{A:1,B:2},{A:3,B:4}]
    * ```
    */
@@ -145,7 +145,8 @@ export class HDBClient {
    * ```
    */
   public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: DQL): Promise<DQLStatement<ST, P>>;
-  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: DML): Promise<DMLStatement<ST, P>>;
+  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: CUDStatement): Promise<DMLStatement<ST, P>>;
+  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: NoParamMatcher): Promise<NoParamStatement>;
   public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: ProceduralStatement): Promise<ProcedureStatement<ST, P>>;
   public async prepare(sql: any) {
     await this._connect();

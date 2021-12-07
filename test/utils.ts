@@ -1,6 +1,8 @@
+/* eslint-disable max-len */
 import dotenv from "dotenv";
 import { Readable } from "stream";
 import * as uuid from "uuid";
+import { HDBClient } from "../src";
 import { HDBClientOption } from "../src/types";
 
 dotenv.config(); // load test env
@@ -40,6 +42,31 @@ export const buffer_to_stream = (buf: Buffer) => {
       this.push(null);
     }
   });
+};
+
+export const run_with_client = async(runner: (client: HDBClient) => Promise<void>) => {
+  const client = new HDBClient(get_db_options());
+  try {
+    await runner(client);
+  } finally {
+    await client.disconnect();    
+    client.close();
+  }
+};
+
+export const run_with_table = async (table_def: Record<string, string>, runner: (client: HDBClient, table_name: string) => Promise<void>) => {
+  return run_with_client(async (client) => {
+    const table_name = random_table_name();
+    try {
+      await client.exec(`CREATE COLUMN TABLE ${table_name} (
+        ${Object.entries(table_def).map(([key, value]) => `${key} ${value}`).join(",\n")}
+      )`);
+      await runner(client, table_name);
+    } finally {
+      await client.exec(`DROP TABLE ${table_name}`);
+    }
+  });
+
 };
 
 

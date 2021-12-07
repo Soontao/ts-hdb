@@ -59,6 +59,24 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
   }
 
   /**
+   * execute statement directly, return result if applicable
+   * 
+   * @param params 
+   * @returns 
+   */
+  public async exec(...params: P): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this._statement.exec(params, (err: Error, results: Array<any>) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results as any);
+        }
+      });
+    });
+  }
+
+  /**
    * direct execute query
    * 
    * @param params 
@@ -147,6 +165,8 @@ type DMLKeyword = CUDKeyword | "load" | "unload" | "truncate"
 
 type DQLKeyword = "select"
 
+type NoParamKeyword = "commit" | "rollback"
+
 /**
  * @private
  * @internal
@@ -190,9 +210,18 @@ export type DDL = `${DDLKeyword | Uppercase<DDLKeyword>}${any}`
 export type DCL = `${DCLKeyword | Uppercase<DCLKeyword>}${any}`
 
 /**
+ * no params statements
+ */
+export type NoParamMatcher = `${NoParamKeyword | Uppercase<NoParamKeyword>}${any}`
+
+/**
  * execute procedure
  */
 export type ProcedureStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "call">
+/**
+ * no param statement
+ */
+export type NoParamStatement = Pick<Statement<void, []>, CommonMethod | "exec">
 /**
  * perform INSERT/UPDATE/DELETE
  */
