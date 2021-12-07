@@ -18,10 +18,16 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
     this._statement = statement;
   }
 
-  public get id() {
-    return this?._statement?.id?.toString("hex");
+  /**
+   * get statement id
+   */
+  public get id(): Buffer {
+    return this?._statement?.id;
   }
 
+  /**
+   * get functionCode
+   */
   public get functionCode(): FunctionCode {
     return this?._statement.functionCode;
   }
@@ -133,21 +139,66 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
 
 type CommonMethod = "id" | "drop" | "functionCode"
 
-export type CallProcedureSql = `${"call" | "CALL"}${any}`
-export type WriteSql = `${"insert" | "update" | "delete" | "INSERT" | "UPDATE" | "DELETE"}${any}`
-export type QuerySql = `${"select" | "SELECT"}${any}`
-export type DDL = `${"create" | "drop" | "CREATE" | "DROP"}${any}`
+type TransactionKeyword = "commit" | "rollback" | "lock table" | "set transaction" | "savepoint" | "release savepoint"
+
+type CUDKeyword = "insert" | "update" | "delete"
+
+type DMLKeyword = CUDKeyword | "load" | "unload" | "truncate" 
+
+type DQLKeyword = "select"
+
+/**
+ * @private
+ * @internal
+ */
+type DDLKeyword = "create" | "drop" | "alter" | "comment" | "annotate" | "rename" | "refresh"
+
+type DCLKeyword = "grant" | "deny" | "revoke" | "backup"
+
+export type ProceduralStatement = `${"call" | "CALL"}${any}`
+
+/**
+ * transaction related statements
+ */
+export type TransactionStatement = `${TransactionKeyword | Uppercase<TransactionKeyword>}${any}`
+
+/**
+ * subset of Data Manipulation Language
+ * 
+ * only contains INSERT/UPDATE/DELETE/
+ */
+export type CUDStatement = `${CUDKeyword | Uppercase<CUDKeyword>}${any}`
+
+/**
+ * Data Manipulation Language
+ */
+export type DML = `${DMLKeyword | Uppercase<DMLKeyword>}${any}`
+
+/**
+ * Data Query Language
+ */
+export type DQL = `${DQLKeyword | Uppercase<DQLKeyword>}${any}`
+
+/**
+ * Data Definition Language
+ */
+export type DDL = `${DDLKeyword | Uppercase<DDLKeyword>}${any}`
+
+/**
+ * Data Control Language
+ */
+export type DCL = `${DCLKeyword | Uppercase<DCLKeyword>}${any}`
 
 /**
  * execute procedure
  */
-export type CallProcedureStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "call">
+export type ProcedureStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "call">
 /**
  * perform INSERT/UPDATE/DELETE
  */
-export type WriteStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "write">
+export type DMLStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "write">
 /**
  * perform SELECT query
  */
-export type QueryStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "execute" | "query">
+export type DQLStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "execute" | "query">
 

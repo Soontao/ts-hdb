@@ -15,7 +15,6 @@ export interface HDBClientOption extends ConnectionOptions {
    * @default true
    */
   scrollableCursor?: boolean;
-
   /**
    * This is suitable for multiple-host SAP HANA systems which are distributed over several hosts. 
    * The client establishes a connection to the first available host from the list.
@@ -86,6 +85,33 @@ KS extends [infer K, ...infer KT]
   : R;
 
 // <<
+
+/**
+ * HDB Data Type
+ */
+export enum DataType {
+  NULL = 0, TINYINT, SMALLINT, INT, BIGINT, DECIMAL, REAL, DOUBLE, 
+  CHAR, VARCHAR, NCHAR, NVARCHAR, 
+  BINARY, VARBINARY, DATE, TIME, TIMESTAMP,
+  CLOB = 25, NCLOB, BLOB, BOOLEAN, 
+  STRING, NSTRING, BLOCATOR, NLOCATOR, BSTRING,
+  ABAPITAB = 48, ABAPSTRUCT, ARRAY, TEXT, SHORTTEXT,
+  ALPHANUM = 55, TLOCATOR, LONGDATE, SECONDDATE, DAYDATE, SECONDTIME
+}
+
+/**
+ * HDB Column Metadata
+ */
+export interface Column {
+  columnDisplayName: string;
+  columnName: string;
+  dataType: DataType;
+  fraction: number;
+  length: number;
+  mode: number;
+  schemaName?: string
+  tableName: string;
+}
 
 /**
  * Function Code

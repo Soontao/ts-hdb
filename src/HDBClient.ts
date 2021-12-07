@@ -5,7 +5,7 @@ import { Mutex } from "@newdash/newdash";
 import { debug } from "debug";
 import * as hdb from "hdb";
 import { ResultSet } from "./ResultSet";
-import { CallProcedureSql, CallProcedureStatement, DDL, QuerySql, QueryStatement, Statement, WriteSql, WriteStatement } from "./Statement";
+import { CUDStatement, DCL, DDL, DML, DMLStatement, DQL, DQLStatement, ProceduralStatement, ProcedureStatement, Statement, TransactionStatement } from "./Statement";
 import { HDBClientOption, ReadyState } from "./types";
 
 const logger = debug("hdb-client");
@@ -86,10 +86,11 @@ export class HDBClient {
    * await client.exec('select A, B from TEST.NUMBERS order by A') // => [{A:1,B:2},{A:3,B:4}]
    * ```
    */
-  public async exec(sql: DDL): Promise<void>;
-  public async exec(sql: QuerySql): Promise<Array<any>>;
-  public async exec(sql: WriteSql): Promise<number>;
-  public async exec(sql: CallProcedureSql): Promise<Array<any>>;
+  public async exec(sql: DDL | TransactionStatement | DCL): Promise<void>;
+  public async exec(sql: DQL): Promise<Array<any>>;
+  public async exec(sql: CUDStatement): Promise<number>;
+  public async exec(sql: ProceduralStatement): Promise<Array<any>>;
+  public async exec(sql: string): Promise<any>; // fallback
   public async exec(sql: string): Promise<any> {
     await this._connect();
     return new Promise((resolve, reject) => {
@@ -109,7 +110,7 @@ export class HDBClient {
    * @param sql query sQL
    * @returns array of query result
    */
-  public async query<T = any>(sql: QuerySql): Promise<Array<T>> {
+  public async query<T = any>(sql: DQL): Promise<Array<T>> {
     // @ts-ignore
     return this.exec(sql);
   }
@@ -120,7 +121,7 @@ export class HDBClient {
    * @param sql 
    * @returns 
    */
-  public async write(sql: WriteSql): Promise<number> {
+  public async write(sql: CUDStatement): Promise<number> {
     // @ts-ignore
     return this.exec(sql);
   }
@@ -143,9 +144,9 @@ export class HDBClient {
    * await client.prepare('CALL proc_xxxxx (?,?)')
    * ```
    */
-  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: QuerySql): Promise<QueryStatement<ST, P>>;
-  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: WriteSql): Promise<WriteStatement<ST, P>>;
-  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: CallProcedureSql): Promise<CallProcedureStatement<ST, P>>;
+  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: DQL): Promise<DQLStatement<ST, P>>;
+  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: DML): Promise<DMLStatement<ST, P>>;
+  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: ProceduralStatement): Promise<ProcedureStatement<ST, P>>;
   public async prepare(sql: any) {
     await this._connect();
     return new Promise((resolve, reject) => {

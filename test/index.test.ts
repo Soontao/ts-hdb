@@ -1,4 +1,5 @@
 import { HDBClient } from "../src";
+import { DataType } from "../src/types";
 import { get_db_options, random_table_name } from "./utils";
 
 describe("Basic Test Suite", () => {
@@ -55,8 +56,14 @@ describe("Basic Test Suite", () => {
       expect(result_set).toHaveLength(1);
       expect(result_set[0].NAME).toBe("Theo");
 
-      const query_rs =  await  query_stat.execute(2);
+      const query_rs = await query_stat.execute(2);
       expect(query_rs).not.toBeUndefined();
+      
+      // assert metadata
+      expect(query_rs.metadata).toHaveLength(2);
+      expect(query_rs.metadata[0].columnName).toBe("ID");
+      expect(query_rs.metadata[0].dataType).toBe(DataType.BIGINT);
+
       for await (const row of query_rs.createObjectStream()) {
         expect(row.ID).not.toBeUndefined();
         expect(row.NAME).not.toBeUndefined();

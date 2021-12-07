@@ -12,8 +12,10 @@
   "cSpell.words": [
     "ABAP",
     "Cesu",
+    "CLOB",
     "paren",
     "SAVEPOINT",
-    "sqlscript"
+    "sqlscript",
+    "TLOCATOR"
   ]
 }
