@@ -6,7 +6,7 @@ import { debug } from "debug";
 import * as hdb from "hdb";
 import { ResultSet } from "./ResultSet";
 import { CUDStatement, DCL, DDL, DMLStatement, DQL, DQLStatement, NoParamMatcher, NoParamStatement, ProceduralStatement, ProcedureStatement, Statement, TransactionStatement } from "./Statement";
-import { HDBClientOption, ReadyState } from "./types";
+import { ExtractSelect, HDBClientOption, ReadyState } from "./types";
 
 const logger = debug("hdb-client");
 
@@ -87,7 +87,7 @@ export class HDBClient {
    * ```
    */
   public async exec(sql: DDL | TransactionStatement | DCL): Promise<void>;
-  public async exec(sql: DQL): Promise<Array<any>>;
+  public async exec<T extends DQL>(sql: T): Promise<Array<ExtractSelect<T>>>;
   public async exec(sql: CUDStatement): Promise<number>;
   public async exec(sql: ProceduralStatement): Promise<Array<any>>;
   public async exec(sql: string): Promise<any>; // fallback
@@ -144,10 +144,11 @@ export class HDBClient {
    * await client.prepare('CALL proc_xxxxx (?,?)')
    * ```
    */
-  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: DQL): Promise<DQLStatement<ST, P>>;
+  // TODO extract parameters
+  public async prepare<SQL extends DQL>(sql: SQL): Promise<DQLStatement<ExtractSelect<SQL>, Array<any>>>;
   public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: CUDStatement): Promise<DMLStatement<ST, P>>;
   public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: NoParamMatcher): Promise<NoParamStatement>;
-  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: ProceduralStatement): Promise<ProcedureStatement<ST, P>>;
+  public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: ProceduralStatement): Promise<ProcedureStatement< ST, P>>;
   public async prepare(sql: any) {
     await this._connect();
     return new Promise((resolve, reject) => {

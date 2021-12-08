@@ -1,5 +1,7 @@
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ConnectionOptions } from "tls";
+import { DQLKeyword } from "./Statement";
 
 
 export interface HDBClientOption extends ConnectionOptions {
@@ -83,6 +85,27 @@ TupleUnion<keyof T>, R extends any[] = []> =
 KS extends [infer K, ...infer KT]
   ? ObjValueTuple<T, KT, [...R, T[K & keyof T]]>
   : R;
+
+export type TrimSpace<T> = T extends ` ${infer Rest}` ? T extends `${infer Rest} ` ? TrimSpace<Rest> : 
+  TrimSpace<Rest> : 
+  T;
+
+/**
+ * "Id" => Id
+ * Id => ID
+ */
+export type ExtractIdentifier<Target extends string> = Target extends `"${infer inner}"` ? inner : Uppercase<Target>;
+
+export type ExtractAs<Target extends string> = Target extends `${infer _}${"as" | "AS"}${infer id}` ? TrimSpace<id> : Target;
+
+export type ExtractColumns<Target extends string, Delimiter extends string = ","> = Target extends `${infer v1}${Delimiter}${infer v2}` ? 
+  ExtractColumns<v1, Delimiter> | ExtractColumns<TrimSpace<v2>, Delimiter>: ExtractIdentifier<ExtractAs<Target>>;
+
+export type ExtractSelect<Sql extends string> = Sql extends `${DQLKeyword | Uppercase<DQLKeyword>}${infer parts}${"from" | Uppercase<"FROM">}${any}` ? 
+  TupleToObject<ExtractColumns<TrimSpace<parts>>>
+  :never;
+
+type TupleToObject<T extends string> = { [key in T]: any; }
 
 // <<
 

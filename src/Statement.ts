@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { NotSupportedOperationError } from "./errors";
 import { ResultSet } from "./ResultSet";
 import { FunctionCode, ObjValueTuple } from "./types";
@@ -5,7 +6,7 @@ import { FunctionCode, ObjValueTuple } from "./types";
 /**
  * @param T item type, for query only
  */
-export class Statement<T = any, P extends Array<any> = Array<any>> {
+export class Statement<T = any, P extends Array<any> = Array<any>, > {
   
   private _statement: any;
 
@@ -84,11 +85,11 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    */
   public async query(...params: P): Promise<Array<T>> {
     return new Promise((resolve, reject) => {
-      this._statement.exec(params, (err: Error, results: Array<any>) => {
+      this._statement.exec(params, (err: Error, results: any) => {
         if (err) {
           reject(err);
         } else {
-          resolve(results);
+          resolve(results as any);
         }
       });
     });
@@ -163,7 +164,7 @@ type CUDKeyword = "insert" | "update" | "delete"
 
 type DMLKeyword = CUDKeyword | "load" | "unload" | "truncate" 
 
-type DQLKeyword = "select"
+export type DQLKeyword = "select"
 
 type NoParamKeyword = "commit" | "rollback"
 

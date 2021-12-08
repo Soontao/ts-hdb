@@ -50,7 +50,7 @@ describe("Basic Test Suite", () => {
       const [{ TOTAL }] = await client.exec(`SELECT COUNT(1) AS TOTAL FROM ${table_name}`);
       expect(TOTAL).toBe(2);
 
-      const query_stat = await client.prepare<T, [number]>(`SELECT ID, NAME FROM ${table_name} WHERE ID = ?`);
+      const query_stat = await client.prepare(`SELECT ID, name FROM ${table_name} WHERE ID = ?`);
       expect(query_stat).not.toBeUndefined();
       const result_set = await query_stat.query(1);
       expect(result_set).toHaveLength(1);
