@@ -1,33 +1,28 @@
-import { Readable } from "stream";
-import { Column } from "./types";
+import { Column, HDBReadableStream } from "./types";
 
-
-interface HDBReadableStream<T = any> extends Readable {
-  [Symbol.asyncIterator](): AsyncIterableIterator<T>;
-}
 
 
 export interface ResultSet<T = any> {
 
-  id: Buffer;
+  readonly  id: Buffer;
 
-  metadata: Array<Column>;
+  readonly metadata: Array<Column>;
 
-  closed: boolean;
+  readonly closed: boolean;
 
-  finished: boolean;
+  readonly finished: boolean;
 
-  fetchSize: number;
+  readonly fetchSize: number;
 
-  averageRowLength: number;
+  readonly averageRowLength: number;
 
-  readSize: number;
+  readonly readSize: number;
 
-  rowsWithMetadata: any;
+  readonly rowsWithMetadata: any;
 
-  useCesu8: boolean;
+  readonly useCesu8: boolean;
 
-  ignoreDefaultLobType: boolean;
+  readonly ignoreDefaultLobType: boolean;
 
   /**
    * set fetch size
@@ -65,7 +60,7 @@ export interface ResultSet<T = any> {
    * 
    * @param options 
    */
-  createArrayStream(options?: StreamOptions): HDBReadableStream<T>;
+  createArrayStream(options?: StreamOptions): HDBReadableStream<Array<T>>;
 
   /**
    * close result set

@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Readable } from "stream";
 import { ConnectionOptions } from "tls";
 import { DQLKeyword } from "./Statement";
 
@@ -67,6 +68,12 @@ export interface HDBClientOption extends ConnectionOptions {
 
 export type ReadyState = "new" | "open" | "connected" | "closed" | "disconnected"
 
+
+export interface HDBReadableStream<T = any> extends Readable {
+  [Symbol.asyncIterator](): AsyncIterableIterator<T>;
+}
+
+
 // >> ref https://stackoverflow.com/a/68695508/4380476
 type UnionToIntersection<U> =
 (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
@@ -101,11 +108,34 @@ export type ExtractAs<Target extends string> = Target extends `${infer _}${"as" 
 export type ExtractColumns<Target extends string, Delimiter extends string = ","> = Target extends `${infer v1}${Delimiter}${infer v2}` ? 
   ExtractColumns<v1, Delimiter> | ExtractColumns<TrimSpace<v2>, Delimiter>: ExtractIdentifier<ExtractAs<Target>>;
 
+
+/**
+ * @example
+ * ```ts
+ * ExtractSelect<'select "Id", NAME as P_NAME from t'> // => {Id:any,P_NAME:any}
+ * ```
+ */
 export type ExtractSelect<Sql extends string> = Sql extends `${DQLKeyword | Uppercase<DQLKeyword>}${infer parts}${"from" | Uppercase<"FROM">}${any}` ? 
   TupleToObject<ExtractColumns<TrimSpace<parts>>>
   :never;
 
+
+/**
+ * @example
+ * 
+ * ```ts
+ * ExtractArguments<"Select a from b where c = ?, b = ?"> // => [any,any]
+ * ```
+ */
+export type ExtractArguments<Sql extends string> = Sql extends `${infer v1}?${infer v2}` ? [
+  ...ExtractArguments<v1>,
+  any,
+  ...ExtractArguments<v2>,
+] : [] 
+
 type TupleToObject<T extends string> = { [key in T]: any; }
+
+export type NotEmptyArray<T> = [T, ...T[]]
 
 // <<
 

@@ -27,11 +27,11 @@ describe("Transaction Test Suite", () => {
 
       const [{ TOTAL }] = await client.exec(`SELECT COUNT(1) AS TOTAL FROM ${table_name}`);
       expect(TOTAL).toBe(2);
-      const [{ A_TOTAL }] = await another_client.query(`SELECT COUNT(1) AS A_TOTAL FROM ${table_name}`);
+      const [{ A_TOTAL }] = await another_client.exec(`SELECT COUNT(1) AS A_TOTAL FROM ${table_name}`);
       expect(A_TOTAL).toBe(0);
       
       await client.commit();
-      const [{ B_TOTAL }] = await another_client.query(`SELECT COUNT(1) AS B_TOTAL FROM ${table_name}`);
+      const [{ B_TOTAL }] = await another_client.exec(`SELECT COUNT(1) AS B_TOTAL FROM ${table_name}`);
       expect(B_TOTAL).toBe(2);
 
       await client.rollback();

@@ -1,12 +1,9 @@
 /* eslint-disable max-len */
 import { NotSupportedOperationError } from "./errors";
 import { ResultSet } from "./ResultSet";
-import { FunctionCode, ObjValueTuple } from "./types";
+import { FunctionCode, NotEmptyArray } from "./types";
 
-/**
- * @param T item type, for query only
- */
-export class Statement<T = any, P extends Array<any> = Array<any>, > {
+export class Statement<T = any, P extends Array<any> = Array<any>> {
   
   private _statement: any;
 
@@ -47,7 +44,20 @@ export class Statement<T = any, P extends Array<any> = Array<any>, > {
    * ```
    * 
    */
-  public async write(...params: Array<T extends any ? any : ObjValueTuple<T>>): Promise<Array<number>> {
+  public async write<PA extends NotEmptyArray<P>>(...params: PA): Promise<{[key in keyof PA]: number}>
+  /**
+   * direct execute write
+   * 
+   * @param params 
+   * 
+   * @example
+   * ```ts
+   * const affectedRows = await stat.write([1, "Theo"]);
+   * expect(affectedRows).toStrictEqual(1);
+   * ```
+   */
+  public async write(...params: P): Promise<number>
+  public async write(...params: any) {
     return new Promise((resolve, reject) => {
       this._statement.exec(params, (err: Error, results: Array<any>) => {
         if (err) {
@@ -96,16 +106,24 @@ export class Statement<T = any, P extends Array<any> = Array<any>, > {
   }
 
   /**
-   * direct call proc
+   * call proc directly
    * 
    * ref the [document](https://github.com/SAP/node-hdb#calling-stored-procedures)
    * 
-   * @param param param map
-   * @returns out parameters array
+   * @param param 
+   * param map, 
+   * for example, 
+   * a proc have 3 `in` params: `A,B,C`, 
+   * the input param should have this format `{A:1,B:2,C:3}`
+   * 
+   * @returns 
+   * out parameters array, 
+   * the plain type will be converted as map and stored in the first item
+   * and other `table type` out parameters will be appended to the results array
    */
-  public async call(param: any): Promise<Array<any>> {
+  public async call(param: T): Promise<P> {
     return new Promise((resolve, reject) => {
-      this._statement.exec(param, (err: Error, ...results: Array<any>) => {
+      this._statement.exec(param, (err: Error, ...results: any) => {
         if (err) {
           reject(err);
         } else {
@@ -133,13 +151,14 @@ export class Statement<T = any, P extends Array<any> = Array<any>, > {
   }
 
   /**
-   * execute with param, in stream mode
+   * execute query with result set, in stream mode
    * 
    * @param params 
    * @returns result set
    * @throws {NotSupportedOperationError}
    */
-  public async execute(...params: P): Promise<ResultSet<T>> {
+  public async streamQuery(...params: P): Promise<ResultSet<T>> {
+    // currently, node-hdb do not convert table type out parameter to result set
     if (this.functionCode === FunctionCode.DB_PROCEDURE_CALL) {
       throw new NotSupportedOperationError(`not support to use 'execute' method to call procedure`);
     }
@@ -230,5 +249,5 @@ export type DMLStatement<T, P extends Array<any>> = Pick<Statement<T, P>, Common
 /**
  * perform SELECT query
  */
-export type DQLStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "execute" | "query">
+export type DQLStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "streamQuery" | "query">
 

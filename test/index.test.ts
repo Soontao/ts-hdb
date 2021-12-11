@@ -1,5 +1,5 @@
 import { HDBClient } from "../src";
-import { DataType } from "../src/types";
+import { DataType, FunctionCode } from "../src/types";
 import { get_db_options, random_table_name, run_with_table } from "./utils";
 
 describe("Basic Test Suite", () => {
@@ -9,7 +9,7 @@ describe("Basic Test Suite", () => {
     expect(get_db_options().host).not.toBeUndefined();
     const client = new HDBClient(get_db_options());
     try {
-      const rows = await client.query<{LABEL_ONE: number}>("SELECT 1 AS LABEL_ONE FROM DUMMY");
+      const rows = await client.exec("SELECT 1 AS LABEL_ONE FROM DUMMY");
       expect(rows).toHaveLength(1);
       expect(rows[0]).toHaveProperty("LABEL_ONE");
       expect(rows[0].LABEL_ONE).toBe(1);
@@ -23,7 +23,7 @@ describe("Basic Test Suite", () => {
 
   });
 
-  it("should support create statement and query with parameter", async () => {
+  it("should support create/update/delete with parameter", async () => {
     const client = new HDBClient(get_db_options());
     const table_name = random_table_name();
     const response =  await client.exec(`CREATE COLUMN TABLE ${table_name} (
@@ -31,24 +31,20 @@ describe("Basic Test Suite", () => {
       NAME nvarchar(255)
     )`);
 
-  
-
     try {
-      interface T {
-        ID: number,
-        NAME: string,
-      }
+    
       expect(response).toBeUndefined();
-      const stat = await client.prepare<T>(`INSERT INTO ${table_name} VALUES (?,?)`);
+      const stat = await client.prepare(`INSERT INTO ${table_name} VALUES (?,?)`);
       expect(stat).not.toBeUndefined();
       expect(stat.id).not.toBeUndefined();
       const affectedRows = await stat.write([1, "Theo"], [2, "Neo"]);
       expect(affectedRows).toStrictEqual([1, 1]);
-
+      expect(await stat.write(3, "Melon")).toStrictEqual(1);
+      
       await stat.drop();
 
       const [{ TOTAL }] = await client.exec(`SELECT COUNT(1) AS TOTAL FROM ${table_name}`);
-      expect(TOTAL).toBe(2);
+      expect(TOTAL).toBe(3);
 
       const query_stat = await client.prepare(`SELECT ID, name FROM ${table_name} WHERE ID = ?`);
       expect(query_stat).not.toBeUndefined();
@@ -56,7 +52,7 @@ describe("Basic Test Suite", () => {
       expect(result_set).toHaveLength(1);
       expect(result_set[0].NAME).toBe("Theo");
 
-      const query_rs = await query_stat.execute(2);
+      const query_rs = await query_stat.streamQuery(2);
       expect(query_rs).not.toBeUndefined();
       
       // assert metadata
@@ -70,7 +66,15 @@ describe("Basic Test Suite", () => {
       }
       query_rs.close();
 
+      const update_stat = await client.prepare(`UPDATE ${table_name} SET NAME = ? WHERE ID = ?`);
+      expect(update_stat.functionCode).toBe(FunctionCode.UPDATE);
+      const update_affected = await update_stat.write(["Theo New", 2], ["Melon New", 3]);
+      expect(update_affected).toStrictEqual([1, 1]);
+
+      expect((await query_stat.query(2))[0].NAME).toBe("Theo New");
+
       await query_stat.drop();
+
     } finally {
       await client.exec(`DROP TABLE ${table_name}`);
       await client.disconnect();    
