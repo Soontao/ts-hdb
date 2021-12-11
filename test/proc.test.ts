@@ -36,7 +36,7 @@ describe("Procedure Test Suite", () => {
       expect(results).not.toBeUndefined();
 
       // @ts-ignore
-      await expect(() => stat.execute({ A: 102, B: 3 })).rejects.toThrow(NotSupportedOperationError);
+      await expect(() => stat.streamQuery({ A: 102, B: 3 })).rejects.toThrow(NotSupportedOperationError);
 
       await stat.drop();
 
