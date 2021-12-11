@@ -1,5 +1,7 @@
 # HDB Driver (TypeScript)
 
+> minimal type-safe hdb driver
+
 [![npm](https://img.shields.io/npm/v/ts-hdb)](https://www.npmjs.com/package/ts-hdb)
 [![node-test](https://github.com/Soontao/ts-hdb/actions/workflows/nodejs.yml/badge.svg)](https://github.com/Soontao/ts-hdb/actions/workflows/nodejs.yml)
 [![codecov](https://codecov.io/gh/Soontao/ts-hdb/branch/main/graph/badge.svg?token=WJf9XudtiU)](https://codecov.io/gh/Soontao/ts-hdb)
