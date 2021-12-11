@@ -5,6 +5,7 @@
 [![npm](https://img.shields.io/npm/v/ts-hdb)](https://www.npmjs.com/package/ts-hdb)
 [![node-test](https://github.com/Soontao/ts-hdb/actions/workflows/nodejs.yml/badge.svg)](https://github.com/Soontao/ts-hdb/actions/workflows/nodejs.yml)
 [![codecov](https://codecov.io/gh/Soontao/ts-hdb/branch/main/graph/badge.svg?token=WJf9XudtiU)](https://codecov.io/gh/Soontao/ts-hdb)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Soontao_ts-hdb&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Soontao_ts-hdb)
 
 ## Get Started
 
