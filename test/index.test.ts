@@ -84,7 +84,7 @@ describe("Basic Test Suite", () => {
   });
 
   it("should support update/delete statements",  () => run_with_table(
-    { ID: "bigint NOT NULL", NAME: "nvarchar(255)" }, 
+    { ID: "bigint NOT NULL PRIMARY KEY", NAME: "nvarchar(255)" }, 
     async(client, table_name) => {
       const inserted = await client.exec(`INSERT INTO ${table_name} VALUES (1, 'Theo')`);
       expect(inserted).toStrictEqual(1);
@@ -95,10 +95,18 @@ describe("Basic Test Suite", () => {
       const updated_2 = await client.exec(`UPDATE ${table_name} SET NAME = 'Theo Updated' WHERE NAME = 'Theo'`);
       expect(updated_2).toBe(0);
 
-      const deleted_1 = await client.exec(`delete from ${table_name} WHERE NAME = 'Theo Updated'`);
+      // update
+      const upsert = await client.exec(`UPSERT ${table_name} VALUES (1, 'Theo Updated 2') WITH PRIMARY KEY`);
+      expect(upsert).toBe(1);
+
+      // insert
+      const upsert_2 = await client.exec(`UPSERT ${table_name} VALUES (11, 'Theo New') WITH PRIMARY KEY`);
+      expect(upsert_2).toBe(1);
+
+      const deleted_1 = await client.exec(`delete from ${table_name} WHERE NAME = 'Theo Updated 2'`);
       expect(deleted_1).toBe(1);
 
-      const deleted_2 = await client.exec(`delete from ${table_name} WHERE NAME = 'Theo Updated'`);
+      const deleted_2 = await client.exec(`delete from ${table_name} WHERE NAME = 'Theo Updated 2'`);
       expect(deleted_2).toBe(0);
     }
   ));

@@ -16,6 +16,7 @@
     "paren",
     "SAVEPOINT",
     "sqlscript",
-    "TLOCATOR"
+    "TLOCATOR",
+    "upsert"
   ]
 }

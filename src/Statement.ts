@@ -179,7 +179,7 @@ type CommonMethod = "id" | "drop" | "functionCode"
 
 type TransactionKeyword = "commit" | "rollback" | "lock table" | "set transaction" | "savepoint" | "release savepoint"
 
-type CUDKeyword = "insert" | "update" | "delete"
+type CUDKeyword = "insert" | "update" | "upsert" | "delete"
 
 type DMLKeyword = CUDKeyword | "load" | "unload" | "truncate" 
 
