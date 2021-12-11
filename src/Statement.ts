@@ -77,11 +77,11 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    */
   public async exec(...params: P): Promise<T> {
     return new Promise((resolve, reject) => {
-      this._statement.exec(params, (err: Error, results: Array<any>) => {
+      this._statement.exec(params, (err: Error, results: T) => {
         if (err) {
           reject(err);
         } else {
-          resolve(results as any);
+          resolve(results);
         }
       });
     });
@@ -99,7 +99,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
         if (err) {
           reject(err);
         } else {
-          resolve(results as any);
+          resolve(results);
         }
       });
     });
