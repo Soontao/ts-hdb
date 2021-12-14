@@ -173,6 +173,8 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
     });
   }
 
+  // TODO streamQueryObject/streamQueryList for prepared statement
+
 }
 
 type CommonMethod = "id" | "drop" | "functionCode"
