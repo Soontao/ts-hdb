@@ -240,12 +240,56 @@ export class HDBClient {
   public streamQueryObject<SQL extends DQL>(query: SQL): AsyncIterable<ExtractSelect<SQL>> {
     let stream: HDBReadableStream<ExtractSelect<SQL>> = undefined;
     const ctx = this;
+    const mut = new Mutex();
     return {
       [Symbol.asyncIterator]() {
         return {
           async next() {
-            if(stream === undefined) {
-              stream = (await ctx.streamQuery(query)).createObjectStream();
+            if (stream === undefined) {
+              const release = await mut.acquire();
+              if (stream === undefined) {
+                stream = (await ctx.streamQuery(query)).createObjectStream();
+              }
+              release();
+            }
+            return stream[Symbol.asyncIterator]().next();
+          },
+        };
+      }
+    };
+  } 
+
+  /**
+   * query with object list stream by async iterator 
+   * 
+   * @param query 
+   * @returns async object iterator
+   * 
+   * 
+   * @example
+   * 
+   * ```ts
+   * for await (const rows of client.streamQueryObject(`SELECT ID, NAME FROM t1`)) {
+   *  expect(rows[0].ID).not.toBeUndefined();
+   *  expect(rows[0].NAME).not.toBeUndefined();
+   * }
+   * ```
+   * 
+   */
+  public streamQueryList<SQL extends DQL>(query: SQL): AsyncIterable<Array<ExtractSelect<SQL>>> {
+    let stream: HDBReadableStream<Array<ExtractSelect<SQL>>> = undefined;
+    const ctx = this;
+    const mut = new Mutex();
+    return {
+      [Symbol.asyncIterator]() {
+        return {
+          async next() {
+            if (stream === undefined) {
+              const release = await mut.acquire();
+              if (stream === undefined) {
+                stream = (await ctx.streamQuery(query)).createArrayStream();
+              }
+              release();
             }
             return stream[Symbol.asyncIterator]().next();
           },
