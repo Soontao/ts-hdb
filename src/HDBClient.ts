@@ -231,8 +231,8 @@ export class HDBClient {
    * 
    * ```ts
    * for await (const row of client.streamQueryObject(`SELECT ID, NAME FROM t1`)) {
-   *  expect(row.ID).not.toBeUndefined();
-   *  expect(row.NAME).not.toBeUndefined();
+   *   expect(row.ID).not.toBeUndefined();
+   *   expect(row.NAME).not.toBeUndefined();
    * }
    * ```
    * 
@@ -270,8 +270,8 @@ export class HDBClient {
    * 
    * ```ts
    * for await (const rows of client.streamQueryObject(`SELECT ID, NAME FROM t1`)) {
-   *  expect(rows[0].ID).not.toBeUndefined();
-   *  expect(rows[0].NAME).not.toBeUndefined();
+   *   expect(rows[0].ID).not.toBeUndefined();
+   *   expect(rows[0].NAME).not.toBeUndefined();
    * }
    * ```
    * 

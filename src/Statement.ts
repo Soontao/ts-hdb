@@ -1,7 +1,8 @@
 /* eslint-disable max-len */
+import { Mutex } from "@newdash/newdash/functional/Mutex";
 import { NotSupportedOperationError } from "./errors";
 import { ResultSet } from "./ResultSet";
-import { FunctionCode, NotEmptyArray } from "./types";
+import { FunctionCode, HDBReadableStream, NotEmptyArray } from "./types";
 
 export class Statement<T = any, P extends Array<any> = Array<any>> {
   
@@ -173,7 +174,83 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
     });
   }
 
-  // TODO streamQueryObject/streamQueryList for prepared statement
+  /**
+   * query with object stream by async iterator 
+   * 
+   * @param query 
+   * @returns async object iterator
+   * 
+   * 
+   * @example
+   * 
+   * ```ts
+   * for await (const row of stat.streamQueryObject(1)) {
+   *   expect(row.ID).not.toBeUndefined();
+   *   expect(row.NAME).not.toBeUndefined();
+   * }
+   * ```
+   * 
+   */
+  public streamQueryObject(...params: P): AsyncIterable<T> {
+    let stream: HDBReadableStream<T> = undefined;
+    const ctx = this;
+    const mut = new Mutex();
+    return {
+      [Symbol.asyncIterator]() {
+        return {
+          async next() {
+            if (stream === undefined) {
+              const release = await mut.acquire();
+              if (stream === undefined) {
+                stream = (await ctx.streamQuery(...params)).createObjectStream();
+              }
+              release();
+            }
+            return stream[Symbol.asyncIterator]().next();
+          },
+        };
+      }
+    };
+  } 
+  
+  /**
+   * query with object list stream by async iterator 
+   * 
+   * @param query 
+   * @returns async object iterator
+   * 
+   * 
+   * @example
+   * 
+   * ```ts
+   * for await (const rows of client.streamQueryObject(`SELECT ID, NAME FROM t1`)) {
+   *   expect(rows[0].ID).not.toBeUndefined();
+   *   expect(rows[0].NAME).not.toBeUndefined();
+   * }
+   * ```
+   * 
+   */
+  public streamQueryList(...params: P): AsyncIterable<Array<T>> {
+    let stream: HDBReadableStream<Array<T>> = undefined;
+    const ctx = this;
+    const mut = new Mutex();
+    return {
+      [Symbol.asyncIterator]() {
+        return {
+          async next() {
+            if (stream === undefined) {
+              const release = await mut.acquire();
+              if (stream === undefined) {
+                stream = (await ctx.streamQuery(...params)).createArrayStream();
+              }
+              release();
+            }
+            return stream[Symbol.asyncIterator]().next();
+          },
+        };
+      }
+    };
+  } 
 
 }
 
@@ -251,5 +328,5 @@ export type DMLStatement<T, P extends Array<any>> = Pick<Statement<T, P>, Common
 /**
  * perform SELECT query
  */
-export type DQLStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "streamQuery" | "query">
+export type DQLStatement<T, P extends Array<any>> = Pick<Statement<T, P>, CommonMethod | "streamQuery" | "query" | "streamQueryList" | "streamQueryObject">
 
