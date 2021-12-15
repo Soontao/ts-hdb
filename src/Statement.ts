@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
-import { Mutex } from "@newdash/newdash/functional/Mutex";
 import { NotSupportedOperationError } from "./errors";
 import { ResultSet } from "./ResultSet";
-import { FunctionCode, HDBReadableStream, NotEmptyArray } from "./types";
+import { FunctionCode, NotEmptyArray } from "./types";
+import { createAsyncStream } from "./utils";
 
 export class Statement<T = any, P extends Array<any> = Array<any>> {
   
@@ -152,7 +152,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
   }
 
   /**
-   * execute query with result set, in stream mode
+   * query result set, in stream mode
    * 
    * @param params 
    * @returns result set
@@ -175,11 +175,9 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
   }
 
   /**
-   * query with object stream by async iterator 
+   * query object stream
    * 
-   * @param query 
    * @returns async object iterator
-   * 
    * 
    * @example
    * 
@@ -192,38 +190,17 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    * 
    */
   public streamQueryObject(...params: P): AsyncIterable<T> {
-    let stream: HDBReadableStream<T> = undefined;
-    const ctx = this;
-    const mut = new Mutex();
-    return {
-      [Symbol.asyncIterator]() {
-        return {
-          async next() {
-            if (stream === undefined) {
-              const release = await mut.acquire();
-              if (stream === undefined) {
-                stream = (await ctx.streamQuery(...params)).createObjectStream();
-              }
-              release();
-            }
-            return stream[Symbol.asyncIterator]().next();
-          },
-        };
-      }
-    };
+    return createAsyncStream(this, "createObjectStream", params);
   } 
   
   /**
-   * query with object list stream by async iterator 
+   * query object list stream
    * 
-   * @param query 
    * @returns async object iterator
-   * 
-   * 
    * @example
    * 
    * ```ts
-   * for await (const rows of client.streamQueryObject(`SELECT ID, NAME FROM t1`)) {
+   * for await (const rows of stat.streamQueryObject(1, 'str')) {
    *   expect(rows[0].ID).not.toBeUndefined();
    *   expect(rows[0].NAME).not.toBeUndefined();
    * }
@@ -231,25 +208,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    * 
    */
   public streamQueryList(...params: P): AsyncIterable<Array<T>> {
-    let stream: HDBReadableStream<Array<T>> = undefined;
-    const ctx = this;
-    const mut = new Mutex();
-    return {
-      [Symbol.asyncIterator]() {
-        return {
-          async next() {
-            if (stream === undefined) {
-              const release = await mut.acquire();
-              if (stream === undefined) {
-                stream = (await ctx.streamQuery(...params)).createArrayStream();
-              }
-              release();
-            }
-            return stream[Symbol.asyncIterator]().next();
-          },
-        };
-      }
-    };
+    return createAsyncStream(this, "createArrayStream", params);
   } 
 
 }

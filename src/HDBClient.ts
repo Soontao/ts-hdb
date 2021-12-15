@@ -6,7 +6,8 @@ import { debug } from "debug";
 import * as hdb from "hdb";
 import { ResultSet } from "./ResultSet";
 import { CUDStatement, DCL, DDL, DMLStatement, DQL, DQLStatement, NoParamMatcher, NoParamStatement, ProceduralStatement, ProcedureStatement, Statement, TransactionStatement } from "./Statement";
-import { ExtractArguments, ExtractSelect, HDBClientOption, HDBReadableStream, ReadyState } from "./types";
+import { ExtractArguments, ExtractSelect, HDBClientOption, ReadyState } from "./types";
+import { createAsyncStream } from "./utils";
 
 const logger = debug("hdb-client");
 
@@ -221,7 +222,7 @@ export class HDBClient {
   }
 
   /**
-   * query with object stream by async iterator 
+   * query object stream  
    * 
    * @param query 
    * @returns async object iterator
@@ -238,33 +239,14 @@ export class HDBClient {
    * 
    */
   public streamQueryObject<SQL extends DQL>(query: SQL): AsyncIterable<ExtractSelect<SQL>> {
-    let stream: HDBReadableStream<ExtractSelect<SQL>> = undefined;
-    const ctx = this;
-    const mut = new Mutex();
-    return {
-      [Symbol.asyncIterator]() {
-        return {
-          async next() {
-            if (stream === undefined) {
-              const release = await mut.acquire();
-              if (stream === undefined) {
-                stream = (await ctx.streamQuery(query)).createObjectStream();
-              }
-              release();
-            }
-            return stream[Symbol.asyncIterator]().next();
-          },
-        };
-      }
-    };
+    return createAsyncStream(this, "createObjectStream", [query]);
   } 
 
   /**
-   * query with object list stream by async iterator 
+   * query object list stream
    * 
    * @param query 
    * @returns async object iterator
-   * 
    * 
    * @example
    * 
@@ -277,25 +259,7 @@ export class HDBClient {
    * 
    */
   public streamQueryList<SQL extends DQL>(query: SQL): AsyncIterable<Array<ExtractSelect<SQL>>> {
-    let stream: HDBReadableStream<Array<ExtractSelect<SQL>>> = undefined;
-    const ctx = this;
-    const mut = new Mutex();
-    return {
-      [Symbol.asyncIterator]() {
-        return {
-          async next() {
-            if (stream === undefined) {
-              const release = await mut.acquire();
-              if (stream === undefined) {
-                stream = (await ctx.streamQuery(query)).createArrayStream();
-              }
-              release();
-            }
-            return stream[Symbol.asyncIterator]().next();
-          },
-        };
-      }
-    };
+    return createAsyncStream(this, "createArrayStream", [query]);
   } 
 
   /**
