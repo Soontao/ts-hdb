@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/Soontao/ts-hdb/compare/v0.1.4...v0.1.5) (2021-12-15)
+
+
+### Features
+
+* refactor stream ([eae55c8](https://github.com/Soontao/ts-hdb/commit/eae55c8bc3a09a5e0adf1c3085a17ff871308c5c))
+* stream sugar for statement ([11f1f8d](https://github.com/Soontao/ts-hdb/commit/11f1f8dda319ade5f668b542cc855e91907bc27c))
+* support stream list ([b94d7dd](https://github.com/Soontao/ts-hdb/commit/b94d7dd808c11e75fe4bbbfd29efb7e2ba7d54c7))
+* support upsert ([873336b](https://github.com/Soontao/ts-hdb/commit/873336b3bab761ef484b61e8e90cedb2d0218857))
+
 ### [0.1.4](https://github.com/Soontao/ts-hdb/compare/v0.1.3...v0.1.4) (2021-12-11)
 
 
