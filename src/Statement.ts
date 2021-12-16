@@ -6,7 +6,10 @@ import { createAsyncStream } from "./utils";
 
 export class Statement<T = any, P extends Array<any> = Array<any>> {
   
-  private _statement: any;
+  /**
+   * node-hdb statement object
+   */
+  #statement: any;
 
   /**
    * @private
@@ -14,21 +17,39 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    * @param statement 
    */
   constructor(statement: any) {
-    this._statement = statement;
+    this.#statement = statement;
   }
 
   /**
    * get statement id
    */
   public get id(): Buffer {
-    return this?._statement?.id;
+    return this.#statement?.id;
   }
 
   /**
    * get functionCode
    */
   public get functionCode(): FunctionCode {
-    return this?._statement.functionCode;
+    return this.#statement.functionCode;
+  }
+
+  /**
+   * execute statement directly, return result if applicable
+   * 
+   * @param params 
+   * @returns 
+   */
+  public async exec(...params: P): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.#statement.exec(params, (err: Error, results: T) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
   }
   
   /**
@@ -40,7 +61,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    * 
    * @example
    * ```ts
-   * const affectedRows = await stat.write([1, "Theo"], [2, "Neo"], [3, "Nano"]);
+   * const affectedRows = await stat.write([1, "Theo"], [2, "People"], [3, "Jason"]);
    * expect(affectedRows).toStrictEqual([1, 1, 1]);
    * ```
    * 
@@ -59,34 +80,10 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    */
   public async write(...params: P): Promise<number>
   public async write(...params: any) {
-    return new Promise((resolve, reject) => {
-      this._statement.exec(params, (err: Error, results: Array<any>) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+    return this.exec(...params);
   }
 
-  /**
-   * execute statement directly, return result if applicable
-   * 
-   * @param params 
-   * @returns 
-   */
-  public async exec(...params: P): Promise<T> {
-    return new Promise((resolve, reject) => {
-      this._statement.exec(params, (err: Error, results: T) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
-  }
+  
 
   /**
    * direct execute query
@@ -95,15 +92,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    * @returns query result
    */
   public async query(...params: P): Promise<Array<T>> {
-    return new Promise((resolve, reject) => {
-      this._statement.exec(params, (err: Error, results: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+    return this.exec(...params);
   }
 
   /**
@@ -124,7 +113,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    */
   public async call(param: T): Promise<P> {
     return new Promise((resolve, reject) => {
-      this._statement.exec(param, (err: Error, ...results: any) => {
+      this.#statement.exec(param, (err: Error, ...results: any) => {
         if (err) {
           reject(err);
         } else {
@@ -141,7 +130,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    */
   public async drop(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this._statement.drop((err: Error) => {
+      this.#statement.drop((err: Error) => {
         if (err) {
           reject(err);
         } else {
@@ -164,7 +153,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
       throw new NotSupportedOperationError(`not support to use 'execute' method to call procedure`);
     }
     return new Promise((resolve, reject) => {
-      this._statement.execute(params, (err: Error, rs: ResultSet) => {
+      this.#statement.execute(params, (err: Error, rs: ResultSet) => {
         if (err) {
           reject(err);
         } else {
@@ -200,7 +189,7 @@ export class Statement<T = any, P extends Array<any> = Array<any>> {
    * @example
    * 
    * ```ts
-   * for await (const rows of stat.streamQueryObject(1, 'str')) {
+   * for await (const rows of stat.streamQueryObject(1, 'string')) {
    *   expect(rows[0].ID).not.toBeUndefined();
    *   expect(rows[0].NAME).not.toBeUndefined();
    * }

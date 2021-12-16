@@ -20,6 +20,7 @@ export interface ResultSet<T = any> {
 
   readonly rowsWithMetadata: any;
 
+  // eslint-disable-next-line spellcheck/spell-checker
   readonly useCesu8: boolean;
 
   readonly ignoreDefaultLobType: boolean;

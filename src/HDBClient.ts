@@ -16,22 +16,31 @@ const logger = debug("hdb-client");
  */
 export class HDBClient {
 
-  private _options: HDBClientOption;
+  /**
+   * configurations
+   */
+  #options: HDBClientOption;
 
-  private _lock: Mutex = new Mutex();
+  /**
+   * mutex lock for single client
+   */
+  #lock: Mutex = new Mutex();
 
-  private _client: any;
+  /**
+   * node-hdb native client
+   */
+  #client: any;
 
   constructor(options: HDBClientOption) {
-    this._options = options;
+    this.#options = options;
   }
 
   private async _connect(): Promise<this> {
-    if (this._client === undefined) {
-      const release = await this._lock.acquire();
-      if (this._client === undefined) {
+    if (this.#client === undefined) {
+      const release = await this.#lock.acquire();
+      if (this.#client === undefined) {
         logger("connecting");
-        const client = hdb.createClient(this._options);
+        const client = hdb.createClient(this.#options);
         client.on("error",  (err: Error) => {
           logger(`network error: ${err}`);
         });
@@ -42,7 +51,7 @@ export class HDBClient {
               reject(err);
             } else {
               logger("connected");
-              this._client = client;
+              this.#client = client;
               resolve(this);
             }
             release();
@@ -58,41 +67,21 @@ export class HDBClient {
    * read state of connection
    */
   public get readyState(): ReadyState {
-    return this?._client?.readyState;
+    return this.#client?.readyState;
   }
 
   /**
    * client of connection
    */
-  public get clientId(): string {
-    return this?._client?.clientId;
+  public get clientId(): Buffer {
+    return this.#client?.clientId;
   }
-
-  /**
-   * Direct statement execution is the simplest way to execute SQL statements.
-   * 
-   * The only input parameter is the SQL command to be executed.
-   * 
-   * The type of returned result depends on the kind of statement.
-   * 
-   * @param sql the sql statement
-   * @returns affected number for DML and result set for Query
-   * 
-   * 
-   * @example
-   * 
-   * ```ts
-   * await client.exec('create table TEST.NUMBERS (a int, b varchar(16))') // => undefined
-   * await client.exec("insert into TEST.NUMBERS values (1, 'one')") // => 1
-   * await client.exec('select A, B from TEST.NUMBERS order by A') // => [{A:1,B:2},{A:3,B:4}]
-   * ```
-   */
 
   
   /**
    * Direct statement execution is the simplest way to execute SQL statements.
    * 
-   * data definition language, defined table sequence or proc
+   * data definition language, defined table sequence or procedure
    * 
    * @param sql 
    * 
@@ -137,7 +126,7 @@ export class HDBClient {
    * @example
    * 
    * ```ts
-   * await client.exec(`call cal_num (102,3,?,?,?)`); // => empty object
+   * await client.exec(`call cal_number (102,3,?,?,?)`); // => empty object
    * ```
    */
   public async exec(sql: ProceduralStatement): Promise<object>;
@@ -145,7 +134,7 @@ export class HDBClient {
   public async exec(sql: string): Promise<any> {
     await this._connect();
     return new Promise((resolve, reject) => {
-      this._client.exec(sql, (err: Error, result: any) => {
+      this.#client.exec(sql, (err: Error, result: any) => {
         if(err) {
           reject(err);
         } else{
@@ -177,7 +166,7 @@ export class HDBClient {
   public async prepare<SQL extends CUDStatement>(sql: SQL): Promise<DMLStatement<any, ExtractArguments<SQL>>>;
   public async prepare<ST = any, P extends Array<any> = Array<any>>(sql: NoParamMatcher): Promise<NoParamStatement>;
   /**
-   * create proc statement
+   * create procedure statement
    * 
    * @template ST parameter type
    * @template P return type
@@ -187,7 +176,7 @@ export class HDBClient {
   public async prepare(sql: any) {
     await this._connect();
     return new Promise((resolve, reject) => {
-      this._client.prepare(sql, (err: Error, stat: any) => {
+      this.#client.prepare(sql, (err: Error, stat: any) => {
         if (err) {
           reject(err);
         } else {
@@ -211,7 +200,7 @@ export class HDBClient {
   public async streamQuery<SQL extends DQL>(query: SQL): Promise<ResultSet<ExtractSelect<SQL>>> {
     await this._connect();
     return new Promise((resolve, reject) => {
-      this._client.execute(query, (err: Error, rs: any) => {
+      this.#client.execute(query, (err: Error, rs: any) => {
         if (err) {
           reject(err);
         } else {
@@ -269,7 +258,7 @@ export class HDBClient {
    */
   public async setAutoCommit(autoCommit: boolean) {
     await this._connect();
-    this._client.setAutoCommit(autoCommit);
+    this.#client.setAutoCommit(autoCommit);
   }
 
   /**
@@ -280,7 +269,7 @@ export class HDBClient {
   public async commit(): Promise<void> {
     await this._connect();
     return new Promise((resolve, reject) => {
-      this._client.commit((err: Error) => {
+      this.#client.commit((err: Error) => {
         if (err) {
           reject(err);
         } else {
@@ -298,7 +287,7 @@ export class HDBClient {
   public async rollback(): Promise<void> {
     await this._connect();
     return new Promise((resolve, reject) => {
-      this._client.rollback((err: Error) => {
+      this.#client.rollback((err: Error) => {
         if (err) {
           reject(err);
         } else {
@@ -314,9 +303,9 @@ export class HDBClient {
    * @returns 
    */
   public async disconnect() {
-    if (this._client) {
+    if (this.#client) {
       return new Promise((resolve, reject) => {
-        this._client.disconnect((err: Error) => {
+        this.#client.disconnect((err: Error) => {
           if (err) {
             reject(err);
           } else {
@@ -328,12 +317,12 @@ export class HDBClient {
   }
 
   /**
-   * close tcp connection
+   * close TCP connection
    */
   public close() {
-    if (this._client) {
-      this._client.close();
-      delete this._client;
+    if (this.#client !== undefined) {
+      this.#client.close();
+      this.#client = undefined;
     }
   }
 

@@ -57,7 +57,7 @@ export interface HDBClientOption extends ConnectionOptions {
    */
   rowsAsArray?: boolean;
   /**
-   * The SAP HANA server connectivity protocol uses CESU-8 encoding. Node.js does not support CESU-8 natively and the driver by default converts all text to CESU-8 format in the javascript layer including SQL statements.
+   * The SAP HANA server connectivity protocol uses CESU-8 encoding. Node.js does not support CESU-8 natively and the driver by default converts all text to CESU-8 format in the JavaScript layer including SQL statements.
    * 
    * Due to the fact that Node.js has built-in support for UTF-8, using UTF-8 in the HDB drivers can lead to performance gains especially for large text data. If you are sure that your data contains only BMP characters, you can disable CESU-8 conversion by setting a flag in the client configuration.
    * 

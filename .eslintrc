@@ -3,7 +3,8 @@
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
-    "prettier"
+    "prettier",
+    "spellcheck"
   ],
   "env": {
     "node": true,
@@ -70,6 +71,25 @@
       2,
       {
         "SwitchCase": 1
+      }
+    ],
+    "spellcheck/spell-checker": [
+      "error",
+      {
+        "ignoreRequire": true,
+        "skipWords": [
+          "hdb",
+          "len",
+          "matcher",
+          "mutex",
+          "theo",
+          "savepoint",
+          "upsert",
+          "sql",
+          "cesu",
+          "natively",
+          "scrollable"
+        ]
       }
     ]
   }
