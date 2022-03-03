@@ -2,9 +2,7 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "@typescript-eslint",
-    "prettier",
-    "spellcheck"
+    "@typescript-eslint"
   ],
   "env": {
     "node": true,
@@ -19,8 +17,7 @@
     }
   },
   "extends": [
-    "plugin:@typescript-eslint/eslint-recommended",
-    "prettier"
+    "plugin:@typescript-eslint/eslint-recommended"
   ],
   "rules": {
     "max-len": [
@@ -71,25 +68,6 @@
       2,
       {
         "SwitchCase": 1
-      }
-    ],
-    "spellcheck/spell-checker": [
-      "error",
-      {
-        "ignoreRequire": true,
-        "skipWords": [
-          "hdb",
-          "len",
-          "matcher",
-          "mutex",
-          "theo",
-          "savepoint",
-          "upsert",
-          "sql",
-          "cesu",
-          "natively",
-          "scrollable"
-        ]
       }
     ]
   }
