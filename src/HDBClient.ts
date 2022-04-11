@@ -2,8 +2,8 @@
 /* eslint-disable max-len */
 
 import { Mutex } from "@newdash/newdash/functional/Mutex";
-import { debug } from "debug";
 import * as hdb from "hdb";
+import { debug } from "util";
 import { ResultSet } from "./ResultSet";
 import { CUDStatement, DCL, DDL, DMLStatement, DQL, DQLStatement, NoParamMatcher, NoParamStatement, ProceduralStatement, ProcedureStatement, Statement, TransactionStatement } from "./Statement";
 import { ExtractArguments, ExtractSelect, HDBClientOption, ReadyState } from "./types";
@@ -41,11 +41,11 @@ export class HDBClient {
       if (this.#client === undefined) {
         logger("connecting");
         const client = hdb.createClient(this.#options);
-        client.on("error",  (err: Error) => {
+        client.on("error", (err: Error) => {
           logger(`network error: ${err}`);
         });
         return new Promise((resolve, reject) => {
-          client.connect( (err: Error) => {
+          client.connect((err: Error) => {
             if (err) {
               logger(`connect error ${err.message}`);
               reject(err);
@@ -57,9 +57,9 @@ export class HDBClient {
             release();
           });
         });
-        
+
       }
-     
+
     }
   }
 
@@ -77,7 +77,7 @@ export class HDBClient {
     return this.#client?.clientId;
   }
 
-  
+
   /**
    * Direct statement execution is the simplest way to execute SQL statements.
    * 
@@ -135,9 +135,9 @@ export class HDBClient {
     await this._connect();
     return new Promise((resolve, reject) => {
       this.#client.exec(sql, (err: Error, result: any) => {
-        if(err) {
+        if (err) {
           reject(err);
-        } else{
+        } else {
           resolve(result);
         }
       });
@@ -229,7 +229,7 @@ export class HDBClient {
    */
   public streamQueryObject<SQL extends DQL>(query: SQL): AsyncIterable<ExtractSelect<SQL>> {
     return createAsyncStream(this, "createObjectStream", [query]);
-  } 
+  }
 
   /**
    * query object list stream
@@ -249,7 +249,7 @@ export class HDBClient {
    */
   public streamQueryList<SQL extends DQL>(query: SQL): AsyncIterable<Array<ExtractSelect<SQL>>> {
     return createAsyncStream(this, "createArrayStream", [query]);
-  } 
+  }
 
   /**
    * set auto commit 
