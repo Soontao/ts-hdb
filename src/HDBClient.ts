@@ -3,13 +3,13 @@
 
 import { Mutex } from "@newdash/newdash/functional/Mutex";
 import * as hdb from "hdb";
-import { debug } from "util";
+import { debuglog } from "util";
 import { ResultSet } from "./ResultSet";
 import { CUDStatement, DCL, DDL, DMLStatement, DQL, DQLStatement, NoParamMatcher, NoParamStatement, ProceduralStatement, ProcedureStatement, Statement, TransactionStatement } from "./Statement";
 import { ExtractArguments, ExtractSelect, HDBClientOption, ReadyState } from "./types";
 import { createAsyncStream } from "./utils";
 
-const logger = debug("hdb-client");
+const logger = debuglog("hdb-client");
 
 /**
  * HDB Client
