@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/space-infix-ops */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Readable } from "stream";
@@ -76,25 +77,25 @@ export interface HDBReadableStream<T = any> extends Readable {
 
 // >> ref https://stackoverflow.com/a/68695508/4380476
 type UnionToIntersection<U> =
-(U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
+  (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
 type LastOf<T> =
-UnionToIntersection<T extends any ? () => T : never> extends () => (infer R) ? R : never
+  UnionToIntersection<T extends any ? () => T : never> extends () => (infer R) ? R : never
 
 // TS4.0+
 type Push<T extends any[], V> = [...T, V];
 
 // TS4.1+
 type TupleUnion<T, L = LastOf<T>, N = [T] extends [never] ? true : false> =
-true extends N ? [] : Push<TupleUnion<Exclude<T, L>>, L>
+  true extends N ? [] : Push<TupleUnion<Exclude<T, L>>, L>
 
-export type ObjValueTuple<T, KS extends any[] = 
+export type ObjValueTuple<T, KS extends any[] =
 TupleUnion<keyof T>, R extends any[] = []> =
-KS extends [infer K, ...infer KT]
-  ? ObjValueTuple<T, KT, [...R, T[K & keyof T]]>
-  : R;
+  KS extends [infer K, ...infer KT]
+    ? ObjValueTuple<T, KT, [...R, T[K & keyof T]]>
+    : R;
 
-export type TrimSpace<T> = T extends ` ${infer Rest}` ? T extends `${infer Rest} ` ? TrimSpace<Rest> : 
-  TrimSpace<Rest> : 
+export type TrimSpace<T> = T extends ` ${infer Rest}` ? T extends `${infer Rest} ` ? TrimSpace<Rest> :
+  TrimSpace<Rest> :
   T;
 
 /**
@@ -105,8 +106,8 @@ export type ExtractIdentifier<Target extends string> = Target extends `"${infer 
 
 export type ExtractAs<Target extends string> = Target extends `${infer _}${"as" | "AS"}${infer id}` ? TrimSpace<id> : Target;
 
-export type ExtractColumns<Target extends string, Delimiter extends string = ","> = Target extends `${infer v1}${Delimiter}${infer v2}` ? 
-  ExtractColumns<v1, Delimiter> | ExtractColumns<TrimSpace<v2>, Delimiter>: ExtractIdentifier<ExtractAs<Target>>;
+export type ExtractColumns<Target extends string, Delimiter extends string = ","> = Target extends `${infer v1}${Delimiter}${infer v2}` ?
+  ExtractColumns<v1, Delimiter> | ExtractColumns<TrimSpace<v2>, Delimiter> : ExtractIdentifier<ExtractAs<Target>>;
 
 
 /**
@@ -115,9 +116,9 @@ export type ExtractColumns<Target extends string, Delimiter extends string = ","
  * ExtractSelect<'select "Id", NAME as P_NAME from t'> // => {Id:any,P_NAME:any}
  * ```
  */
-export type ExtractSelect<Sql extends string> = Sql extends `${DQLKeyword | Uppercase<DQLKeyword>}${infer parts}${"from" | Uppercase<"FROM">}${any}` ? 
+export type ExtractSelect<Sql extends string> = Sql extends `${DQLKeyword | Uppercase<DQLKeyword>}${infer parts}${"from" | Uppercase<"FROM">}${any}` ?
   TupleToObject<ExtractColumns<TrimSpace<parts>>>
-  :never;
+  : never;
 
 
 /**
@@ -131,7 +132,7 @@ export type ExtractArguments<Sql extends string> = Sql extends `${infer v1}?${in
   ...ExtractArguments<v1>,
   any,
   ...ExtractArguments<v2>,
-] : [] 
+] : []
 
 type TupleToObject<T extends string> = { [key in T]: any; }
 
@@ -143,10 +144,10 @@ export type NotEmptyArray<T> = [T, ...T[]]
  * HDB Data Type
  */
 export enum DataType {
-  NULL = 0, TINYINT, SMALLINT, INT, BIGINT, DECIMAL, REAL, DOUBLE, 
-  CHAR, VARCHAR, NCHAR, NVARCHAR, 
+  NULL = 0, TINYINT, SMALLINT, INT, BIGINT, DECIMAL, REAL, DOUBLE,
+  CHAR, VARCHAR, NCHAR, NVARCHAR,
   BINARY, VARBINARY, DATE, TIME, TIMESTAMP,
-  CLOB = 25, NCLOB, BLOB, BOOLEAN, 
+  CLOB = 25, NCLOB, BLOB, BOOLEAN,
   STRING, NSTRING, BLOCATOR, NLOCATOR, BSTRING,
   ABAPITAB = 48, ABAPSTRUCT, ARRAY, TEXT, SHORTTEXT,
   ALPHANUM = 55, TLOCATOR, LONGDATE, SECONDDATE, DAYDATE, SECONDTIME
@@ -193,6 +194,6 @@ export enum FunctionCode {
   FIND_LOB = 20,
   ABAP_STREAM = 21,
   XA_START = 22,
-  XA_JOIN = 23, 
+  XA_JOIN = 23,
 }
 
