@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/Soontao/ts-hdb/compare/v0.1.6...v0.1.7) (2022-06-13)
+
+
+### Bug Fixes
+
+* lint ([03da38f](https://github.com/Soontao/ts-hdb/commit/03da38f7b4e9dd6f0c0858ea7f6a2a3f92f58871))
+* ut ([1919fe9](https://github.com/Soontao/ts-hdb/commit/1919fe9f3ab442cbd5d463b8dd249a4398087054))
+
 ### [0.1.6](https://github.com/Soontao/ts-hdb/compare/v0.1.5...v0.1.6) (2022-03-09)
 
 ### [0.1.5](https://github.com/Soontao/ts-hdb/compare/v0.1.4...v0.1.5) (2021-12-15)
