@@ -3,6 +3,9 @@
   "version": "0.1.6",
   "description": "hdb driver with typescript",
   "main": "lib/index.js",
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "test": "jest --passWithNoTests",
     "prebuild": "rimraf lib",

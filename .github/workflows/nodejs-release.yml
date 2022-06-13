@@ -14,12 +14,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          node-version: 18.x
           registry-url: https://registry.npmjs.org/
 
       - name: npm test
         run: |
-          npm install
+          npm ci
           npm test
           npm shrinkwrap
         env:
