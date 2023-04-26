@@ -9,7 +9,6 @@
   },
   "scripts": {
     "test": "jest --setupFiles dotenv/config --passWithNoTests",
-    "prebuild": "rimraf lib",
     "build": "tsc",
     "postbuild": "tsc --noEmit --p tsconfig.lib.json",
     "lint": "eslint src/** --fix",
