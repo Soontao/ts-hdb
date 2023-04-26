@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.8](https://github.com/Soontao/ts-hdb/compare/v0.1.7...v0.1.8) (2023-04-26)
+
+
+### Features
+
+* async generator ([6fd90f8](https://github.com/Soontao/ts-hdb/commit/6fd90f882ae5e36d94bd7326e794fe65cbd78ee7))
+
 ### [0.1.7](https://github.com/Soontao/ts-hdb/compare/v0.1.6...v0.1.7) (2022-06-13)
 
 
