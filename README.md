@@ -14,7 +14,7 @@ npm i -S ts-hdb
 ```
 
 ```ts
-import { HDBClient } from "ts-hdb"
+import { HDBClient } from "ts-hdb";
 
 async function run() {
   const client = new HDBClient({
@@ -24,7 +24,9 @@ async function run() {
     password: "password",
     useTLS: true,
   });
-  for await (const row of client.streamQueryObject('SELECT A,B,c,D as "d" FROM A_TABLE')) {
+  for await (const row of client.streamQueryObject(
+    'SELECT A,B,c,D as "d" FROM A_TABLE'
+  )) {
     // the type of `row` is { A: any, B: any, C: any, d: any}
     // row.A
     // row.B
@@ -33,8 +35,15 @@ async function run() {
   }
 }
 
-run()
+run();
+```
+
+## Troubleshooting
+
+```bash
+export NODE_DEBUG=hdb-client
 ```
 
 ## [CHANGELOG](./CHANGELOG.md)
+
 ## [LICENSE](./LICENSE)
