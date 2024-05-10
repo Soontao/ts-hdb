@@ -13,6 +13,7 @@
     "ABAP",
     "Cesu",
     "CLOB",
+    "nvarchar",
     "paren",
     "SAVEPOINT",
     "sqlscript",
