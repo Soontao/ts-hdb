@@ -1,6 +1,6 @@
 {
   "name": "ts-hdb",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "hdb driver with typescript",
   "main": "lib/index.js",
   "engines": {
