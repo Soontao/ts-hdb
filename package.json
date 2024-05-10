@@ -4,8 +4,8 @@
   "description": "hdb driver with typescript",
   "main": "lib/index.js",
   "engines": {
-    "node": ">=14",
-    "npm": ">=6"
+    "node": ">=18",
+    "npm": ">=8"
   },
   "scripts": {
     "test": "jest --setupFiles dotenv/config --passWithNoTests",
