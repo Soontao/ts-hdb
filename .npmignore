@@ -12,3 +12,7 @@ jest.config.js
 .prettierignore
 .prettierrc.json
 src
+renovate.json       
+tsconfig*
+.whitesource
+.env.example

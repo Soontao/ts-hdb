@@ -3,6 +3,7 @@
 
 import { Mutex } from "@newdash/newdash/functional/Mutex";
 import * as hdb from "hdb";
+import { inspect } from "node:util";
 import { debuglog } from "util";
 import { ResultSet } from "./ResultSet";
 import { CUDStatement, DCL, DDL, DMLStatement, DQL, DQLStatement, NoParamMatcher, NoParamStatement, ProceduralStatement, ProcedureStatement, Statement, TransactionStatement } from "./Statement";
@@ -42,12 +43,12 @@ export class HDBClient {
         logger("connecting");
         const client = hdb.createClient(this.#options);
         client.on("error", (err: Error) => {
-          logger(`network error: ${err}`);
+          logger(`hdb client error: ${inspect(err)}`);
         });
         return new Promise((resolve, reject) => {
           client.connect((err: Error) => {
             if (err) {
-              logger(`connect error ${err.message}`);
+              logger(`connect error ${inspect(err)}`);
               reject(err);
             } else {
               logger("connected");
@@ -61,6 +62,7 @@ export class HDBClient {
       }
 
     }
+    return this;
   }
 
   /**
