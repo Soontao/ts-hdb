@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.9](https://github.com/Soontao/ts-hdb/compare/v0.1.8...v0.1.9) (2024-05-10)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @newdash/newdash to v5.22.1 ([fb7bc34](https://github.com/Soontao/ts-hdb/commit/fb7bc3475feb9bcdfdcab74bc66f446abb0ccaaf))
+* **deps:** update dependency hdb to v0.19.6 ([7362003](https://github.com/Soontao/ts-hdb/commit/73620033aad859c4f24c992e3a080c3eca3fd7c3))
+* **deps:** update dependency hdb to v0.19.7 ([939cef1](https://github.com/Soontao/ts-hdb/commit/939cef1fa170fdb085a1b25751bf010784474f15))
+* **deps:** update dependency hdb to v0.19.8 ([f36aed9](https://github.com/Soontao/ts-hdb/commit/f36aed9812cb9a4ac30391cf5d76cbbfba651635))
+
 ### [0.1.8](https://github.com/Soontao/ts-hdb/compare/v0.1.7...v0.1.8) (2023-04-26)
 
 
