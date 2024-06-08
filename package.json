@@ -30,7 +30,7 @@
     "uuid": "9.0.1"
   },
   "dependencies": {
-    "@newdash/newdash": "5.22.1",
+    "@newdash/newdash": "5.23.1",
     "hdb": "0.19.8"
   },
   "keywords": [
